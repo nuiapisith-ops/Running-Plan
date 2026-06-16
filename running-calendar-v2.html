@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>ตารางวิ่งของหนุ่ย</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@500;600;700;800&family=Anuphan:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0B0E13; --card:#161C26; --card-2:#1D2531; --line:#2A3340; --line-2:#374253;
+  --ink:#EEF3F9; --muted:#8A96A8; --muted-2:#5E6878;
+  --easy:#6FD89A; --long:#43C2B4; --quality:#FF6A4D; --weights:#9B92FF;
+  --rest:#5B6473; --walk:#6FB6DE; --test:#FFC656;
+  --accent:#FF6A4D; --good:#5FD08A; --skip:#6B7585;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{background:var(--bg); color:var(--ink); font-family:'Anuphan',sans-serif;
+  min-height:100vh; padding:0 0 56px; overflow-x:hidden;
+  background-image:radial-gradient(120% 60% at 50% -8%, rgba(255,106,77,.14), transparent 60%)}
+.wrap{width:100%; max-width:580px; margin:0 auto; padding:22px 14px 0}
+.eyebrow{font-size:11.5px; letter-spacing:.18em; color:var(--accent); font-weight:700; text-transform:uppercase}
+h1{font-family:'Prompt',sans-serif; font-weight:800; font-size:clamp(26px,7vw,34px); line-height:1.15; margin-top:6px}
+.sub{color:var(--muted); font-size:13.5px; margin-top:4px}
+.prog{display:flex; align-items:center; gap:16px; margin:18px 0 4px; background:var(--card); border:1px solid var(--line); border-radius:18px; padding:14px 16px}
+.ring{position:relative; width:62px; height:62px; flex-shrink:0}
+.ring svg{transform:rotate(-90deg)}
+.ring .pct{position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-family:'Prompt',sans-serif; font-weight:700; font-size:15px}
+.prog-meta{flex:1; min-width:0}
+.prog-meta .big{font-family:'Prompt',sans-serif; font-weight:600; font-size:15px}
+.prog-meta .small{color:var(--muted); font-size:12.5px; margin-top:2px}
+.streak{display:flex; align-items:center; gap:5px; margin-top:6px; font-size:12.5px; color:var(--test); font-weight:600}
+.advice{position:relative; margin:14px 0 6px; border-radius:18px; overflow:hidden; background:var(--card-2); border:1px solid var(--line); padding:16px 18px 16px 20px}
+.advice::before{content:""; position:absolute; left:0; top:0; bottom:0; width:5px; background:var(--at,var(--accent))}
+.advice .lab{font-size:11px; letter-spacing:.14em; text-transform:uppercase; font-weight:700; color:var(--at,var(--accent))}
+.advice .ttl{font-family:'Prompt',sans-serif; font-weight:700; font-size:18px; margin:5px 0 6px; line-height:1.25}
+.advice .bd{font-size:14px; color:#C4CDD9; line-height:1.6}
+.legend{display:flex; flex-wrap:wrap; gap:7px 13px; margin:16px 2px; font-size:12px; color:var(--muted)}
+.legend span{display:flex; align-items:center; gap:6px}
+.dot{width:9px; height:9px; border-radius:50%; flex-shrink:0}
+.dow{display:grid; grid-template-columns:30px repeat(7,1fr); gap:6px; margin-bottom:7px; padding:0 2px}
+.dow div{text-align:center; font-size:11px; color:var(--muted-2); font-weight:700}
+.week{display:grid; grid-template-columns:30px repeat(7,1fr); gap:6px; margin-bottom:6px}
+.wk{display:flex; align-items:center; justify-content:center; font-family:'Prompt',sans-serif; font-size:10px; font-weight:700; color:var(--muted-2); background:var(--card); border-radius:11px; writing-mode:vertical-rl; transform:rotate(180deg); letter-spacing:.1em}
+.day{position:relative; background:var(--card); border:1px solid var(--line); border-radius:13px; padding:8px 3px 9px; min-height:78px; display:flex; flex-direction:column; align-items:center; gap:3px; cursor:pointer; -webkit-tap-highlight-color:transparent; transition:transform .12s, border-color .12s, background .2s}
+.day:active{transform:scale(.95)}
+.day:focus-visible{outline:2px solid var(--ink); outline-offset:2px}
+.day::before{content:""; position:absolute; top:0; left:11px; right:11px; height:3px; border-radius:0 0 4px 4px; background:var(--c,transparent)}
+.day .num{font-family:'Prompt',sans-serif; font-size:14px; font-weight:700; line-height:1}
+.day .mo{font-size:8.5px; color:var(--muted-2); line-height:1}
+.day .ic{font-size:15px; line-height:1; margin-top:1px}
+.day .tag{font-size:8.5px; font-weight:600; line-height:1.1; text-align:center; color:var(--muted); padding:0 1px}
+.t-easy{--c:var(--easy)} .t-long{--c:var(--long)} .t-quality{--c:var(--quality)} .t-weights{--c:var(--weights)} .t-rest{--c:var(--rest)} .t-walk{--c:var(--walk)} .t-test{--c:var(--test)}
+.day.today{border-color:var(--c); box-shadow:0 0 0 1px var(--c), 0 0 18px -4px var(--c)}
+.day.today .num{color:var(--c)}
+.badge{position:absolute; top:-6px; right:-5px; width:20px; height:20px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:800; border:2px solid var(--bg); font-family:'Prompt',sans-serif}
+.badge.done{background:var(--good); color:#0B0E13}
+.badge.skip{background:var(--skip); color:#0B0E13}
+.day.done{background:linear-gradient(180deg, rgba(95,208,138,.10), var(--card))}
+.day.skipped{opacity:.42}
+.day.skipped .tag, .day.skipped .num{text-decoration:line-through}
+.todaypin{position:absolute; bottom:-7px; left:50%; transform:translateX(-50%); background:var(--c); color:#0B0E13; font-size:8px; font-weight:800; padding:1.5px 7px; border-radius:99px; font-family:'Prompt',sans-serif; white-space:nowrap}
+.day.quality:not(.done):not(.skipped) .ic{animation:pulse 2.2s ease-in-out infinite}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.16)}}
+.rules{background:var(--card); border:1px solid var(--line); border-radius:16px; padding:15px 17px; margin-top:18px; font-size:13px; color:var(--muted); line-height:1.7}
+.rules b{color:var(--ink); font-weight:600}
+.rules .rt{font-family:'Prompt',sans-serif; color:var(--accent); font-weight:700; font-size:12.5px; letter-spacing:.05em; margin-bottom:5px}
+.foot{margin-top:18px; text-align:center; font-size:11.5px; color:var(--muted-2); line-height:1.6}
+.backdrop{position:fixed; inset:0; background:rgba(4,6,10,.66); opacity:0; pointer-events:none; transition:opacity .22s; z-index:40; backdrop-filter:blur(3px)}
+.backdrop.show{opacity:1; pointer-events:auto}
+.sheet{position:fixed; left:0; right:0; bottom:0; z-index:50; background:var(--card-2); border-radius:24px 24px 0 0; padding:14px 20px calc(22px + env(safe-area-inset-bottom)); transform:translateY(106%); transition:transform .3s cubic-bezier(.32,.72,.25,1); max-width:580px; margin:0 auto; max-height:82vh; overflow-y:auto; border-top:3px solid var(--sc,var(--line))}
+.sheet.show{transform:translateY(0)}
+.grip{width:40px; height:4px; border-radius:99px; background:var(--line-2); margin:0 auto 14px}
+.s-date{font-size:12.5px; color:var(--muted); font-weight:500}
+.s-status{font-size:12px; font-weight:700; margin-top:3px}
+.s-title{font-family:'Prompt',sans-serif; font-size:23px; font-weight:700; margin:3px 0 12px; display:flex; align-items:center; gap:10px}
+.s-title .ic{font-size:25px}
+.chips{display:flex; flex-wrap:wrap; gap:7px; margin-bottom:13px}
+.chip{background:var(--card); border:1px solid var(--line); border-radius:99px; font-size:12px; padding:5px 12px; color:var(--ink); font-weight:500}
+.s-detail{font-size:14px; line-height:1.75; color:#C6CFDB}
+.s-detail ol{margin:8px 0 0 20px} .s-detail li{margin-bottom:5px}
+.s-note{margin-top:13px; padding:10px 12px; border-radius:11px; background:var(--card); border-left:3px solid var(--sc); font-size:12.5px; color:var(--muted); line-height:1.6}
+.s-actions{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:18px}
+.btn{padding:13px; border:none; border-radius:13px; font-family:'Anuphan',sans-serif; font-size:14.5px; font-weight:700; cursor:pointer; transition:transform .1s, filter .15s; border:1px solid transparent}
+.btn:active{transform:scale(.97)} .btn:focus-visible{outline:2px solid var(--ink); outline-offset:2px}
+.btn-done{background:var(--good); color:#0B140C}
+.btn-skip{background:transparent; color:var(--muted); border-color:var(--line-2)}
+.btn-skip.on{background:var(--skip); color:#0B0E13; border-color:var(--skip)}
+.btn-clear{grid-column:1/-1; background:var(--card); color:var(--muted); border:1px solid var(--line); padding:11px; border-radius:12px; font-size:13px; font-weight:600; cursor:pointer; margin-top:2px}
+.btn-close{grid-column:1/-1; background:var(--card); color:var(--ink); border:1px solid var(--line); padding:13px; border-radius:13px; font-size:15px; font-weight:600; cursor:pointer; margin-top:8px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="eyebrow">Heart-rate training · 4 สัปดาห์</div>
+  <h1>ตารางวิ่งของหนุ่ย</h1>
+  <div class="sub">13 มิ.ย. – 10 ก.ค. 2026 · แตะวันเพื่อดู & เช็คว่าทำแล้ว</div>
+  <div class="prog">
+    <div class="ring">
+      <svg width="62" height="62" viewBox="0 0 62 62">
+        <circle cx="31" cy="31" r="26" fill="none" stroke="var(--line)" stroke-width="6"/>
+        <circle id="ringFill" cx="31" cy="31" r="26" fill="none" stroke="var(--accent)" stroke-width="6" stroke-linecap="round" stroke-dasharray="163.4" stroke-dashoffset="163.4" style="transition:stroke-dashoffset .6s ease"/>
+      </svg>
+      <div class="pct" id="ringPct">0%</div>
+    </div>
+    <div class="prog-meta">
+      <div class="big" id="progBig">เริ่มกันเลย!</div>
+      <div class="small" id="progSmall">ทำตามแผนแล้ว 0 จาก 22 วัน</div>
+      <div class="streak" id="streakLine" hidden>🔥 <span id="streakN"></span></div>
+    </div>
+  </div>
+  <div class="advice" id="advice">
+    <div class="lab" id="advLab">คำแนะนำวันนี้</div>
+    <div class="ttl" id="advTtl">—</div>
+    <div class="bd" id="advBd">—</div>
+  </div>
+  <div class="legend">
+    <span><i class="dot" style="background:var(--easy)"></i>วิ่งสบาย</span>
+    <span><i class="dot" style="background:var(--long)"></i>วิ่งยาวช้า</span>
+    <span><i class="dot" style="background:var(--quality)"></i>วิ่งคุณภาพ</span>
+    <span><i class="dot" style="background:var(--weights)"></i>เวท</span>
+    <span><i class="dot" style="background:var(--walk)"></i>เดิน</span>
+    <span><i class="dot" style="background:var(--test)"></i>วัดผล</span>
+    <span><i class="dot" style="background:var(--rest)"></i>พัก</span>
+  </div>
+  <div class="dow"><div></div><div>ส</div><div>อา</div><div>จ</div><div>อ</div><div>พ</div><div>พฤ</div><div>ศ</div></div>
+  <div id="cal"></div>
+  <div class="rules">
+    <div class="rt">กฎเหล็ก 3 ข้อ</div>
+    <b>1.</b> วันสบาย/ยาว — HR แตะ <b>150</b> ให้เดินจนลง ~130 แล้วค่อยวิ่งต่อ<br>
+    <b>2.</b> วิ่งหนักได้แค่ <b>สัปดาห์ละ 1 วัน</b> (วันสีส้ม)<br>
+    <b>3.</b> เพลีย/นอนน้อย/HR พุ่งง่าย → เปลี่ยนเป็นพักได้เลย ไม่ต้องรู้สึกผิด
+  </div>
+  <div class="foot" id="foot">บันทึกอัตโนมัติในเครื่องนี้</div>
+</div>
+
+<div class="backdrop" id="backdrop"></div>
+<div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sTitle">
+  <div class="grip"></div>
+  <div class="s-date" id="sDate"></div>
+  <div class="s-status" id="sStatus"></div>
+  <div class="s-title" id="sTitle"></div>
+  <div class="chips" id="sChips"></div>
+  <div class="s-detail" id="sDetail"></div>
+  <div class="s-note" id="sNote" hidden></div>
+  <div class="s-actions">
+    <button class="btn btn-done" id="btnDone">✓ ทำแล้ว</button>
+    <button class="btn btn-skip" id="btnSkip">ข้ามวันนี้</button>
+    <button class="btn-clear" id="btnClear" hidden>ล้างสถานะวันนี้</button>
+    <button class="btn-close" id="btnClose">ปิด</button>
+  </div>
+</div>
+
+<script>
+const CONFIG = { SHEETS_WEBAPP_URL: "" };
+
+const Store = (() => {
+  let mem={}, ok=false;
+  try { localStorage.setItem("__t","1"); localStorage.removeItem("__t"); ok=true; } catch(e){ ok=false; }
+  return { persistent:ok,
+    get(k){ try { return ok?localStorage.getItem(k):(mem[k]??null); } catch(e){ return mem[k]??null; } },
+    set(k,v){ try { ok?localStorage.setItem(k,v):(mem[k]=v); } catch(e){ mem[k]=v; } } };
+})();
+async function pushToSheets(key,status){ if(!CONFIG.SHEETS_WEBAPP_URL) return;
+  try { fetch(CONFIG.SHEETS_WEBAPP_URL,{method:"POST",headers:{"Content-Type":"text/plain"},body:JSON.stringify({key,status})}); } catch(e){} }
+async function loadFromSheets(){ if(!CONFIG.SHEETS_WEBAPP_URL) return null;
+  try { const r=await fetch(CONFIG.SHEETS_WEBAPP_URL); return await r.json(); } catch(e){ return null; } }
+
+const TYPES={easy:{label:"วิ่งสบาย",ic:"🏃",color:"var(--easy)"},long:{label:"วิ่งยาวช้า",ic:"🛣️",color:"var(--long)"},quality:{label:"วิ่งคุณภาพ",ic:"⚡",color:"var(--quality)"},weights:{label:"เวท",ic:"🏋️",color:"var(--weights)"},rest:{label:"พัก",ic:"😴",color:"var(--rest)"},walk:{label:"เดิน",ic:"🚶",color:"var(--walk)"},test:{label:"วัดผล",ic:"📊",color:"var(--test)"}};
+const THAI_DOW=["อาทิตย์","จันทร์","อังคาร","พุธ","พฤหัสบดี","ศุกร์","เสาร์"];
+const MO={6:"มิ.ย.",7:"ก.ค."};
+const WD='<b>ที่บ้าน (ตัวเปล่า):</b><ol><li>สควอท 10–12 ครั้ง</li><li>ลันจ์ ข้างละ 8–10 ครั้ง</li><li>วิดพื้น 8–12 ครั้ง</li><li>โรว์ (ดัมเบล/ยางยืด) 10–12 ครั้ง</li><li>แพลงก์ 30–45 วินาที</li></ol><b style="display:block;margin-top:10px">เวอร์ชันยิม:</b> Goblet Squat · Dumbbell Lunge · Chest Press · Seated Cable Row · Plank<br>ทั้งคู่: 2–3 เซ็ต/ท่า ทำทีละท่าจนจบ พัก 60–90 วิ';
+
+const PLAN=[
+ {d:[13,6],t:"walk",title:"เดินชิลล์",chips:["30–45 นาที","HR ต่ำๆ"],detail:"เดินสบายๆ ให้ฟื้นจากสี่วันที่วิ่งติดกัน (อ.–ศ.)"},
+ {d:[14,6],t:"rest",title:"พักเต็มวัน",chips:["ไม่วิ่ง ไม่เวท"],detail:"หนุ่ยวิ่งทุกวัน อ.–ศ. แล้วเดินวันเสาร์ — วันนี้พักจริงๆ ก่อนเริ่มแผน นอนให้พอ ดื่มน้ำเยอะๆ",note:"พักก่อนเริ่ม ดีกว่าฝืนแล้วเจ็บ"},
+ {d:[15,6],t:"easy",title:"วิ่งสบาย 5K",chips:["5 กม.","HR < 150","~9:00–9:30/กม."],detail:"เริ่มแผนวันแรก pace นิ่งทุกกิโล คุยเป็นประโยคได้ ถ้า HR แตะ 150 เดินจนลง ~130 ค่อยไปต่อ",note:"เดินวอร์ม 5 นาทีก่อน + คูลดาวน์ 5 นาทีหลัง ทุกวันวิ่ง"},
+ {d:[16,6],t:"weights",title:"เวทเต็มตัว",chips:["30–40 นาที","2–3 เซ็ต/ท่า"],detail:WD},
+ {d:[17,6],t:"rest",title:"พักเต็มวัน",chips:["ไม่วิ่ง ไม่เวท"],detail:"หัวใจกับกล้ามแข็งแรงตอนพัก ไม่ใช่ตอนวิ่ง นอนให้พอ ยืดเหยียดเบาๆ ได้"},
+ {d:[18,6],t:"easy",title:"วิ่งสบาย 5K",chips:["5 กม.","HR < 150"],detail:"ช้า นิ่ง สบาย เป้าคือสะสมเวลาในโซน รู้สึกดีมากค่อยขยับเป็น 6 กม. แต่ HR ห้ามเกิน 150"},
+ {d:[19,6],t:"weights",title:"เวทเต็มตัว",chips:["30–40 นาที"],detail:WD},
+ {d:[20,6],t:"long",title:"วิ่งยาวช้า 7K",chips:["7 กม.","HR < 150","ช้าได้ช้าเลย"],detail:"ไกลสุดของแผนจนถึงตอนนี้ เป้าคือ 'อยู่บนขาให้นาน' ไม่ใช่เร็ว แวะเดินได้",note:"เหมาะกับเส้นทางสวยๆ อย่างเบญจกิติ ☀️"},
+ {d:[21,6],t:"rest",title:"พักเต็มวัน",chips:["ฟื้นจากวิ่งยาว"],detail:"เมื่อวานไกลสุดในรอบหลายเดือน วันนี้ให้ขาได้หยุดจริงๆ"},
+ {d:[22,6],t:"easy",title:"วิ่งสบาย 5K",chips:["5 กม.","HR < 150"],detail:"กลับสู่โหมดปกติ ช้า นิ่ง สบาย"},
+ {d:[23,6],t:"weights",title:"เวทเต็มตัว",chips:["30–40 นาที"],detail:WD},
+ {d:[24,6],t:"quality",title:"วิ่งคุณภาพ ครั้งแรก!",chips:["4 × 3 นาที","ช่วงเร่ง HR 160–168"],detail:"<ol><li>วอร์ม 10 นาที</li><li><b>เร่ง 3 นาที</b> คุม HR 160–168 (เหนื่อยแต่พูดได้ทีละวลี)</li><li><b>เดิน 2 นาที</b> ให้ HR ลง</li><li>ทำซ้ำครบ 4 รอบ</li><li>คูลดาวน์ 10 นาที</li></ol>",note:"ห้ามทะลุ 170 — นี่คือวันหนัก 'วันเดียว' ของสัปดาห์"},
+ {d:[25,6],t:"rest",title:"พักเต็มวัน",chips:["ฟื้นจากวันคุณภาพ"],detail:"หลังวันหนักต้องพักเสมอ คู่นี้มาด้วยกันตลอด"},
+ {d:[26,6],t:"weights",title:"เวทเต็มตัว",chips:["30–40 นาที"],detail:WD},
+ {d:[27,6],t:"long",title:"วิ่งยาวช้า 7–8K",chips:["7–8 กม.","HR < 150"],detail:"ขยับจากสัปดาห์ก่อนอีกนิด ถ้า 7 กม. ยังสดค่อยต่อเป็น 8 ฟังร่างกายเป็นหลัก"},
+ {d:[28,6],t:"rest",title:"พักเต็มวัน",chips:[""],detail:"พักจริงจัง นอนชดเชยได้เต็มที่"},
+ {d:[29,6],t:"easy",title:"วิ่งสบาย 5K",chips:["5 กม.","HR < 150"],detail:"ช้า นิ่ง สบาย เหมือนเดิม"},
+ {d:[30,6],t:"weights",title:"เวทเต็มตัว",chips:["30–40 นาที"],detail:WD},
+ {d:[1,7],t:"quality",title:"วิ่งคุณภาพ 5 รอบ",chips:["5 × 3 นาที","HR 160–168"],detail:"<ol><li>วอร์ม 10 นาที</li><li>เร่ง 3 นาที (HR 160–168) สลับเดิน 2 นาที</li><li>ครบ <b>5 รอบ</b> (เพิ่มจากครั้งก่อน 1 รอบ)</li><li>คูลดาวน์ 10 นาที</li></ol>",note:"เพดานเดิม — ห้ามทะลุ 170"},
+ {d:[2,7],t:"rest",title:"พักเต็มวัน",chips:[""],detail:"ฟื้นจากวันคุณภาพ"},
+ {d:[3,7],t:"weights",title:"เวทเต็มตัว",chips:["30–40 นาที"],detail:WD},
+ {d:[4,7],t:"long",title:"วิ่งยาวช้า 6K",chips:["6 กม.","HR < 150","สัปดาห์เบา"],detail:"ลดโหลดให้ร่างกายดูดซับความฟิต วิ่งสั้นลงนิด สบายเหมือนเดิม"},
+ {d:[5,7],t:"rest",title:"พักเต็มวัน",chips:[""],detail:"พักเต็มที่ก่อนสัปดาห์วัดผล"},
+ {d:[6,7],t:"easy",title:"วิ่งสบาย 4–5K",chips:["4–5 กม.","HR < 150"],detail:"เบาๆ สั้นๆ แค่ให้ขาไม่ลืมจังหวะ"},
+ {d:[7,7],t:"weights",title:"เวทเบา",chips:["20–30 นาที","เบาลงครึ่งนึง"],detail:"ทำชุดเดิมแต่เบาลง ~ครึ่งหนึ่ง แค่กระตุ้นกล้ามเนื้อ ไม่เอาเหนื่อยสะสม"},
+ {d:[8,7],t:"rest",title:"พักเต็มวัน",chips:["ก่อนวันวัดผล"],detail:"พรุ่งนี้วันสำคัญ นอนให้พอ"},
+ {d:[9,7],t:"test",title:"วันวัดผล 5K",chips:["5 กม.","คุม HR 145–150"],detail:"วิ่ง 5K คุม HR 145–150 นิ่งๆ ตลอด แล้วดู pace<br><br>เทียบ 4 มิ.ย. (HR 146 → 9:09/กม.) — <b>ถ้า pace เร็วขึ้นที่ HR เท่าเดิม = หัวใจแข็งแรงขึ้นจริง</b>",note:"เสร็จแล้วส่งผลมาให้ดูด้วยนะ 📈"},
+ {d:[10,7],t:"walk",title:"เดินฉลองจบแผน 🎉",chips:["ชิลล์ๆ ตามใจ"],detail:"ครบ 4 สัปดาห์! เดินสบายๆ ภูมิใจกับตัวเองได้เต็มที่ ทำตามแผนได้ครบคือชัยชนะแรกแล้ว"},
+];
+
+let statuses={};
+try { statuses=JSON.parse(Store.get("nui-run-status")||"{}"); } catch(e){ statuses={}; }
+const keyOf=d=>d[0]+"-"+d[1];
+const ACTIVE=t=>!["rest","walk"].includes(t);
+const KEY_SESSION=t=>["quality","long"].includes(t);
+function saveStatuses(){ Store.set("nui-run-status",JSON.stringify(statuses)); }
+function setStatus(key,val){ if(val===null) delete statuses[key]; else statuses[key]=val; saveStatuses(); pushToSheets(key,val); render(); }
+function todayIndex(){ const n=new Date(); for(let i=0;i<PLAN.length;i++){ if(n.getFullYear()===2026&&n.getMonth()+1===PLAN[i].d[1]&&n.getDate()===PLAN[i].d[0]) return i; } return -1; }
+
+function computeAdvice(){
+  const ti=todayIndex();
+  if(ti<0){ const done=Object.values(statuses).filter(s=>s==="done").length;
+    if(done===0) return {at:"var(--accent)",lab:"พร้อมเริ่ม",ttl:"ยังไม่ถึงช่วงของแผน",bd:"แผนเริ่ม 13 มิ.ย. แตะแต่ละวันเพื่อดูรายละเอียด แล้วเช็ค ✓ เมื่อทำเสร็จ"};
+    return {at:"var(--good)",lab:"สรุป",ttl:"นอกช่วงแผนแล้ว",bd:"ทำตามแผนไป "+done+" วัน เก่งมาก! อยากได้แผนเดือนถัดไปบอกได้เลย"}; }
+  const today=PLAN[ti], st=statuses[keyOf(today.d)];
+  if(st==="done") return {at:"var(--good)",lab:"วันนี้",ttl:"ทำครบแล้ว 🎉",bd:"เยี่ยมมากหนุ่ย "+today.title+"เรียบร้อย พักผ่อนให้เต็มที่"};
+  let consec=0;
+  for(let i=ti-1;i>=0;i--){ const p=PLAN[i],s=statuses[keyOf(p.d)]; if(s==="done"&&ACTIVE(p.t)) consec++; else break; }
+  if(ACTIVE(today.t)&&consec>=3) return {at:"var(--quality)",lab:"ปรับแผน · เตือน",ttl:"ทำหนักมา "+consec+" วันติดแล้ว",bd:"วันนี้แนะนำ <b>พักหรือเดินเบาๆ</b> แทน "+today.title+" — ให้หัวใจได้ฟื้น สำคัญกว่าฝืนตามตาราง"};
+  if(ti>0){ const y=PLAN[ti-1], ys=statuses[keyOf(y.d)];
+    if(ys==="skipped"){
+      if(KEY_SESSION(y.t)){ let slot=null; for(let i=ti;i<PLAN.length;i++){ if(PLAN[i].t==="rest"&&!statuses[keyOf(PLAN[i].d)]){ slot=PLAN[i]; break; } }
+        const where=slot?(" ลองขยับไปทำวัน"+THAI_DOW[new Date(2026,slot.d[1]-1,slot.d[0]).getDay()]+"ที่ "+slot.d[0]+" "+MO[slot.d[1]]+" (วันพัก) แทน"):"";
+        return {at:"var(--long)",lab:"ปรับแผน",ttl:"เมื่อวานข้าม"+y.title,bd:"ไม่ต้องอัดชดเชยวันนี้ — "+y.title+"เป็นวันสำคัญ"+where+"<br>ส่วนวันนี้ทำตามแผน: <b>"+today.title+"</b>"}; }
+      return {at:"var(--easy)",lab:"ปรับแผน",ttl:"เมื่อวานข้ามไป ไม่เป็นไร",bd:"วันสบาย/เวทข้ามได้ ไม่ต้องชดเชย วันนี้ทำตามแผนต่อ: <b>"+today.title+"</b>"};
+    } }
+  return {at:TYPES[today.t].color,lab:"แผนวันนี้",ttl:today.title,bd:(today.chips.filter(c=>c).join(" · ")||"")+(today.note?"<br>"+today.note:"")};
+}
+
+function render(){
+  let html="";
+  for(let w=0;w<4;w++){ html+=`<div class="week"><div class="wk">สัปดาห์ ${w+1}</div>`;
+    for(let i=0;i<7;i++){ const idx=w*7+i,p=PLAN[idx],ty=TYPES[p.t],k=keyOf(p.d),s=statuses[k];
+      const n=new Date(); const tdy=(n.getFullYear()===2026&&n.getMonth()+1===p.d[1]&&n.getDate()===p.d[0]);
+      let badge=""; if(s==="done") badge=`<span class="badge done">✓</span>`; else if(s==="skipped") badge=`<span class="badge skip">✕</span>`;
+      html+=`<button class="day t-${p.t} ${p.t==='quality'?'quality':''} ${tdy?'today':''} ${s==='done'?'done':''} ${s==='skipped'?'skipped':''}" data-i="${idx}" aria-label="${p.d[0]} ${MO[p.d[1]]} ${p.title}"><span class="num">${p.d[0]}</span><span class="mo">${MO[p.d[1]]}</span><span class="ic">${ty.ic}</span><span class="tag">${ty.label}</span>${badge}${tdy?'<span class="todaypin">วันนี้</span>':''}</button>`; }
+    html+=`</div>`; }
+  document.getElementById("cal").innerHTML=html;
+
+  const doneCount=Object.values(statuses).filter(s=>s==="done").length, total=PLAN.length, pct=Math.round(doneCount/total*100);
+  document.getElementById("ringFill").style.strokeDashoffset=(163.4*(1-doneCount/total)).toFixed(1);
+  document.getElementById("ringPct").textContent=pct+"%";
+  document.getElementById("progSmall").textContent=`ทำตามแผนแล้ว ${doneCount} จาก ${total} วัน`;
+  document.getElementById("progBig").textContent=doneCount===0?"เริ่มกันเลย!":(pct>=100?"จบแผนแล้ว! 🎉":"กำลังไปได้สวย");
+  const ti=todayIndex(); let streak=0; const start=ti>=0?ti:PLAN.length-1;
+  for(let i=start;i>=0;i--){ const s=statuses[keyOf(PLAN[i].d)]; if(s==="done") streak++; else break; }
+  const sl=document.getElementById("streakLine");
+  if(streak>=2){ sl.hidden=false; document.getElementById("streakN").textContent="ทำต่อเนื่อง "+streak+" วันติด"; } else sl.hidden=true;
+
+  const a=computeAdvice(), adv=document.getElementById("advice");
+  adv.style.setProperty("--at",a.at);
+  document.getElementById("advLab").textContent=a.lab;
+  document.getElementById("advTtl").innerHTML=a.ttl;
+  document.getElementById("advBd").innerHTML=a.bd;
+
+  document.getElementById("foot").textContent=(Store.persistent?"✓ บันทึกอัตโนมัติในเครื่องนี้":"⚠️ โหมดพรีวิว — จะจำได้เมื่อนำไป host เป็นเว็บจริง")+(CONFIG.SHEETS_WEBAPP_URL?" · ซิงค์ Google Sheets แล้ว":"");
+}
+
+let curIdx=null,lastFocus=null;
+const sheet=document.getElementById("sheet"),backdrop=document.getElementById("backdrop");
+function openSheet(i){ curIdx=i; const p=PLAN[i],ty=TYPES[p.t],k=keyOf(p.d),s=statuses[k]; const date=new Date(2026,p.d[1]-1,p.d[0]);
+  sheet.style.setProperty("--sc",ty.color);
+  document.getElementById("sDate").textContent=`วัน${THAI_DOW[date.getDay()]}ที่ ${p.d[0]} ${MO[p.d[1]]} 2026 · สัปดาห์ที่ ${Math.floor(i/7)+1}`;
+  const ss=document.getElementById("sStatus");
+  if(s==="done"){ ss.textContent="✓ ทำแล้ว"; ss.style.color="var(--good)"; } else if(s==="skipped"){ ss.textContent="✕ ข้ามไป"; ss.style.color="var(--skip)"; } else ss.textContent="";
+  document.getElementById("sTitle").innerHTML=`<span class="ic">${ty.ic}</span>${p.title}`;
+  document.getElementById("sChips").innerHTML=p.chips.filter(c=>c).map(c=>`<span class="chip">${c}</span>`).join("");
+  document.getElementById("sDetail").innerHTML=p.detail;
+  const note=document.getElementById("sNote"); if(p.note){ note.hidden=false; note.textContent=p.note; } else note.hidden=true;
+  document.getElementById("btnDone").classList.toggle("on",s==="done");
+  document.getElementById("btnSkip").classList.toggle("on",s==="skipped");
+  document.getElementById("btnClear").hidden=!s;
+  backdrop.classList.add("show"); sheet.classList.add("show");
+  lastFocus=document.activeElement; document.getElementById("btnClose").focus();
+}
+function closeSheet(){ backdrop.classList.remove("show"); sheet.classList.remove("show"); if(lastFocus) lastFocus.focus(); }
+document.getElementById("cal").addEventListener("click",e=>{ const b=e.target.closest(".day"); if(b) openSheet(+b.dataset.i); });
+backdrop.addEventListener("click",closeSheet);
+document.getElementById("btnClose").addEventListener("click",closeSheet);
+document.getElementById("btnDone").addEventListener("click",()=>{ const k=keyOf(PLAN[curIdx].d); setStatus(k,statuses[k]==="done"?null:"done"); openSheet(curIdx); });
+document.getElementById("btnSkip").addEventListener("click",()=>{ const k=keyOf(PLAN[curIdx].d); setStatus(k,statuses[k]==="skipped"?null:"skipped"); openSheet(curIdx); });
+document.getElementById("btnClear").addEventListener("click",()=>{ setStatus(keyOf(PLAN[curIdx].d),null); openSheet(curIdx); });
+document.addEventListener("keydown",e=>{ if(e.key==="Escape") closeSheet(); });
+
+(async function init(){ const remote=await loadFromSheets(); if(remote&&typeof remote==="object"){ statuses=Object.assign({},statuses,remote); saveStatuses(); } render(); })();
+</script>
+</body>
+</html>
