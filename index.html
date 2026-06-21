@@ -36,6 +36,14 @@ h1{font-family:'Prompt',sans-serif; font-weight:800; font-size:clamp(26px,7vw,34
 .advice .lab{font-size:11px; letter-spacing:.14em; text-transform:uppercase; font-weight:700; color:var(--at,var(--accent))}
 .advice .ttl{font-family:'Prompt',sans-serif; font-weight:700; font-size:18px; margin:5px 0 6px; line-height:1.25}
 .advice .bd{font-size:14px; color:#C4CDD9; line-height:1.6}
+.dash{display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin:14px 0 2px}
+.dtile{background:var(--card); border:1px solid var(--line); border-radius:14px; padding:12px 6px 11px; text-align:center; position:relative; overflow:hidden}
+.dtile::before{content:""; position:absolute; top:0; left:0; right:0; height:3px; background:var(--dc,var(--accent)); opacity:.9}
+.dtile .dic{font-size:15px; line-height:1}
+.dtile .dnum{font-family:'Prompt',sans-serif; font-weight:700; font-size:19px; line-height:1.15; margin-top:3px}
+.dtile .dnum small{font-size:11px; font-weight:600; color:var(--muted)}
+.dtile .dlab{font-size:10px; color:var(--muted); margin-top:2px; line-height:1.2}
+@media (max-width:430px){ .dash{grid-template-columns:repeat(2,1fr)} }
 .legend{display:flex; flex-wrap:wrap; gap:7px 13px; margin:16px 2px; font-size:12px; color:var(--muted)}
 .legend span{display:flex; align-items:center; gap:6px}
 .dot{width:9px; height:9px; border-radius:50%; flex-shrink:0}
@@ -51,7 +59,7 @@ h1{font-family:'Prompt',sans-serif; font-weight:800; font-size:clamp(26px,7vw,34
 .day .mo{font-size:8.5px; color:var(--muted-2); line-height:1}
 .day .ic{font-size:15px; line-height:1; margin-top:1px}
 .day .tag{font-size:8.5px; font-weight:600; line-height:1.1; text-align:center; color:var(--muted); padding:0 1px}
-.t-easy{--c:var(--easy)} .t-long{--c:var(--long)} .t-quality{--c:var(--quality)} .t-weights{--c:var(--weights)} .t-rest{--c:var(--rest)} .t-walk{--c:var(--walk)} .t-test{--c:var(--test)}
+.t-easy{--c:var(--easy)} .t-long{--c:var(--long)} .t-quality{--c:var(--quality)} .t-weights{--c:var(--weights)} .t-combo{--c:var(--weights)} .t-rest{--c:var(--rest)} .t-walk{--c:var(--walk)} .t-test{--c:var(--test)}
 .day.today{border-color:var(--c); box-shadow:0 0 0 1px var(--c), 0 0 18px -4px var(--c)}
 .day.today .num{color:var(--c)}
 .badge{position:absolute; top:-6px; right:-5px; width:20px; height:20px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:800; border:2px solid var(--bg); font-family:'Prompt',sans-serif}
@@ -115,11 +123,13 @@ h1{font-family:'Prompt',sans-serif; font-weight:800; font-size:clamp(26px,7vw,34
     <div class="ttl" id="advTtl">—</div>
     <div class="bd" id="advBd">—</div>
   </div>
+  <div class="dash" id="dash"></div>
   <div class="legend">
     <span><i class="dot" style="background:var(--easy)"></i>วิ่งสบาย</span>
     <span><i class="dot" style="background:var(--long)"></i>วิ่งยาวช้า</span>
     <span><i class="dot" style="background:var(--quality)"></i>วิ่งคุณภาพ</span>
     <span><i class="dot" style="background:var(--weights)"></i>เวท</span>
+    <span><i class="dot" style="background:var(--weights)"></i>วิ่ง+เวท</span>
     <span><i class="dot" style="background:var(--walk)"></i>เดิน</span>
     <span><i class="dot" style="background:var(--test)"></i>วัดผล</span>
     <span><i class="dot" style="background:var(--rest)"></i>พัก</span>
@@ -127,10 +137,11 @@ h1{font-family:'Prompt',sans-serif; font-weight:800; font-size:clamp(26px,7vw,34
   <div class="dow"><div></div><div>ส</div><div>อา</div><div>จ</div><div>อ</div><div>พ</div><div>พฤ</div><div>ศ</div></div>
   <div id="cal"></div>
   <div class="rules">
-    <div class="rt">กฎเหล็ก 3 ข้อ</div>
-    <b>1.</b> วันสบาย/ยาว — HR แตะ <b>150</b> ให้เดินจนลง ~130 แล้วค่อยวิ่งต่อ<br>
-    <b>2.</b> วิ่งหนักได้แค่ <b>สัปดาห์ละ 1 วัน</b> (วันสีส้ม)<br>
-    <b>3.</b> เพลีย/นอนน้อย/HR พุ่งง่าย → เปลี่ยนเป็นพักได้เลย ไม่ต้องรู้สึกผิด
+    <div class="rt">กฎใหม่ · เน้นวิ่งสนุกและต่อเนื่อง</div>
+    <b>1.</b> วันสบาย — <b>วิ่งต่อเนื่องช้าๆ ที่ยังคุยเป็นประโยคได้</b> (talk test) ไม่ต้องหยุดเดิน ไม่ต้องจ้องนาฬิกา HR แถวๆ 150 ก็โอเค ถ้าพูดไม่ออกค่อยผ่อน<br>
+    <b>2.</b> วิ่งหนักจริงได้แค่ <b>สัปดาห์ละ 1 วัน</b> (วันสีส้ม) — ที่เหลือวิ่งสบายให้สนุก<br>
+    <b>3.</b> <b>ออกไปวิ่งข้างนอกบ้าง!</b> ลู่วิ่งน่าเบื่อ วิวสวยๆ อย่างเบญจกิติทำให้สนุกขึ้นเยอะ<br>
+    <b>4.</b> เพลีย/งานหนัก/ขาตึง → พักได้เลย ไม่ต้องรู้สึกผิด
   </div>
   <div class="foot" id="foot">บันทึกอัตโนมัติในเครื่องนี้</div>
 </div>
@@ -167,10 +178,11 @@ async function pushToSheets(key,status){ if(!CONFIG.SHEETS_WEBAPP_URL) return;
 async function loadFromSheets(){ if(!CONFIG.SHEETS_WEBAPP_URL) return null;
   try { const r=await fetch(CONFIG.SHEETS_WEBAPP_URL); return await r.json(); } catch(e){ return null; } }
 
-const TYPES={easy:{label:"วิ่งสบาย",ic:"🏃",color:"var(--easy)"},long:{label:"วิ่งยาวช้า",ic:"🛣️",color:"var(--long)"},quality:{label:"วิ่งคุณภาพ",ic:"⚡",color:"var(--quality)"},weights:{label:"เวท",ic:"🏋️",color:"var(--weights)"},rest:{label:"พัก",ic:"😴",color:"var(--rest)"},walk:{label:"เดิน",ic:"🚶",color:"var(--walk)"},test:{label:"วัดผล",ic:"📊",color:"var(--test)"}};
+const TYPES={easy:{label:"วิ่งสบาย",ic:"🏃",color:"var(--easy)"},long:{label:"วิ่งยาวช้า",ic:"🛣️",color:"var(--long)"},quality:{label:"วิ่งคุณภาพ",ic:"⚡",color:"var(--quality)"},weights:{label:"เวท",ic:"🏋️",color:"var(--weights)"},combo:{label:"วิ่ง+เวท",ic:"🏃",color:"var(--weights)"},rest:{label:"พัก",ic:"😴",color:"var(--rest)"},walk:{label:"เดิน",ic:"🚶",color:"var(--walk)"},test:{label:"วัดผล",ic:"📊",color:"var(--test)"}};
 const THAI_DOW=["อาทิตย์","จันทร์","อังคาร","พุธ","พฤหัสบดี","ศุกร์","เสาร์"];
 const MO={6:"มิ.ย.",7:"ก.ค."};
 const WD='<b>ที่บ้าน (ตัวเปล่า):</b><ol><li>สควอท 10–12 ครั้ง</li><li>ลันจ์ ข้างละ 8–10 ครั้ง</li><li>วิดพื้น 8–12 ครั้ง</li><li>โรว์ (ดัมเบล/ยางยืด) 10–12 ครั้ง</li><li>แพลงก์ 30–45 วินาที</li></ol><b style="display:block;margin-top:10px">เวอร์ชันยิม:</b> Goblet Squat · Dumbbell Lunge · Chest Press · Seated Cable Row · Plank<br>ทั้งคู่: 2–3 เซ็ต/ท่า ทำทีละท่าจนจบ พัก 60–90 วิ';
+const CD='<b>เช้า — วิ่งสบาย 5K:</b> วิ่งต่อเนื่องช้าๆ คุยได้ (talk test)<br><b>เย็น — เวท 30–40 นาที:</b> สควอท · ลันจ์ · วิดพื้น · โรว์ · แพลงก์ (2–3 เซ็ต)<br>แยกเช้า–เย็น ให้แต่ละอันมีคุณภาพ และเหลือวันพักเต็มๆ ได้';
 
 const PLAN=[
  {d:[13,6],t:"walk",title:"เดินชิลล์",chips:["30–45 นาที","HR ต่ำๆ"],detail:"เดินสบายๆ ให้ฟื้นจากสี่วันที่วิ่งติดกัน (อ.–ศ.)"},
@@ -182,23 +194,23 @@ const PLAN=[
  {d:[19,6],t:"weights",title:"เวทเต็มตัว",chips:["30–40 นาที"],detail:WD},
  {d:[20,6],t:"long",title:"วิ่งยาวช้า 7K",chips:["7 กม.","HR < 150","ช้าได้ช้าเลย"],detail:"ไกลสุดของแผนจนถึงตอนนี้ เป้าคือ 'อยู่บนขาให้นาน' ไม่ใช่เร็ว แวะเดินได้",note:"เหมาะกับเส้นทางสวยๆ อย่างเบญจกิติ ☀️"},
  {d:[21,6],t:"rest",title:"พักเต็มวัน",chips:["ฟื้นจากวิ่งยาว"],detail:"เมื่อวานไกลสุดในรอบหลายเดือน วันนี้ให้ขาได้หยุดจริงๆ"},
- {d:[22,6],t:"easy",title:"วิ่งสบาย 5K",chips:["5 กม.","HR < 150"],detail:"กลับสู่โหมดปกติ ช้า นิ่ง สบาย"},
- {d:[23,6],t:"weights",title:"เวทเต็มตัว",chips:["30–40 นาที"],detail:WD},
+ {d:[22,6],t:"combo",title:"วิ่งสบาย + เวท",chips:["เช้า: วิ่ง 5K","เย็น: เวท"],detail:CD},
+ {d:[23,6],t:"easy",title:"วิ่งสบาย 5K",chips:["5 กม.","HR < 150"],detail:"วิ่งสบาย ช้า นิ่ง เก็บเวลาในโซน"},
  {d:[24,6],t:"quality",title:"วิ่งคุณภาพ ครั้งแรก!",chips:["4 × 3 นาที","ช่วงเร่ง HR 160–168"],detail:"<ol><li>วอร์ม 10 นาที</li><li><b>เร่ง 3 นาที</b> คุม HR 160–168 (เหนื่อยแต่พูดได้ทีละวลี)</li><li><b>เดิน 2 นาที</b> ให้ HR ลง</li><li>ทำซ้ำครบ 4 รอบ</li><li>คูลดาวน์ 10 นาที</li></ol>",note:"ห้ามทะลุ 170 — นี่คือวันหนัก 'วันเดียว' ของสัปดาห์"},
- {d:[25,6],t:"rest",title:"พักเต็มวัน",chips:["ฟื้นจากวันคุณภาพ"],detail:"หลังวันหนักต้องพักเสมอ คู่นี้มาด้วยกันตลอด"},
- {d:[26,6],t:"easy",title:"วิ่งสบาย 5K",chips:["5 กม.","HR < 150"],detail:"วิ่งสบายปิดท้ายสัปดาห์ ช้า นิ่ง เก็บเวลาในโซน HR < 150"},
+ {d:[25,6],t:"combo",title:"วิ่งสบาย + เวท",chips:["เช้า: วิ่ง 5K","เย็น: เวท"],detail:CD},
+ {d:[26,6],t:"rest",title:"พักเต็มวัน",chips:["ไม่วิ่ง ไม่เวท"],detail:"พักให้เต็มที่ ก่อนวิ่งยาววันเสาร์"},
  {d:[27,6],t:"long",title:"วิ่งยาวช้า 7–8K",chips:["7–8 กม.","HR < 150"],detail:"ขยับจากสัปดาห์ก่อนอีกนิด ถ้า 7 กม. ยังสดค่อยต่อเป็น 8 ฟังร่างกายเป็นหลัก"},
  {d:[28,6],t:"rest",title:"พักเต็มวัน",chips:[""],detail:"พักจริงจัง นอนชดเชยได้เต็มที่"},
- {d:[29,6],t:"easy",title:"วิ่งสบาย 5K",chips:["5 กม.","HR < 150"],detail:"ช้า นิ่ง สบาย เหมือนเดิม"},
- {d:[30,6],t:"weights",title:"เวทเต็มตัว",chips:["30–40 นาที"],detail:WD},
+ {d:[29,6],t:"combo",title:"วิ่งสบาย + เวท",chips:["เช้า: วิ่ง 5K","เย็น: เวท"],detail:CD},
+ {d:[30,6],t:"easy",title:"วิ่งสบาย 5K",chips:["5 กม.","HR < 150"],detail:"วิ่งสบาย ช้า นิ่ง เก็บเวลาในโซน"},
  {d:[1,7],t:"quality",title:"วิ่งคุณภาพ 5 รอบ",chips:["5 × 3 นาที","HR 160–168"],detail:"<ol><li>วอร์ม 10 นาที</li><li>เร่ง 3 นาที (HR 160–168) สลับเดิน 2 นาที</li><li>ครบ <b>5 รอบ</b> (เพิ่มจากครั้งก่อน 1 รอบ)</li><li>คูลดาวน์ 10 นาที</li></ol>",note:"เพดานเดิม — ห้ามทะลุ 170"},
- {d:[2,7],t:"rest",title:"พักเต็มวัน",chips:[""],detail:"ฟื้นจากวันคุณภาพ"},
- {d:[3,7],t:"easy",title:"วิ่งสบาย 5K",chips:["5 กม.","HR < 150"],detail:"วิ่งสบายปิดท้ายสัปดาห์ ช้า นิ่ง HR < 150"},
+ {d:[2,7],t:"combo",title:"วิ่งสบาย + เวท",chips:["เช้า: วิ่ง 5K","เย็น: เวท"],detail:CD},
+ {d:[3,7],t:"rest",title:"พักเต็มวัน",chips:["ไม่วิ่ง ไม่เวท"],detail:"พักให้เต็มที่ ก่อนวิ่งยาววันเสาร์"},
  {d:[4,7],t:"long",title:"วิ่งยาวช้า 6K",chips:["6 กม.","HR < 150","สัปดาห์เบา"],detail:"ลดโหลดให้ร่างกายดูดซับความฟิต วิ่งสั้นลงนิด สบายเหมือนเดิม"},
  {d:[5,7],t:"rest",title:"พักเต็มวัน",chips:[""],detail:"พักเต็มที่ก่อนสัปดาห์วัดผล"},
  {d:[6,7],t:"easy",title:"วิ่งสบาย 4–5K",chips:["4–5 กม.","HR < 150"],detail:"เบาๆ สั้นๆ แค่ให้ขาไม่ลืมจังหวะ"},
- {d:[7,7],t:"weights",title:"เวทเบา",chips:["20–30 นาที","เบาลงครึ่งนึง"],detail:"ทำชุดเดิมแต่เบาลง ~ครึ่งหนึ่ง แค่กระตุ้นกล้ามเนื้อ ไม่เอาเหนื่อยสะสม"},
- {d:[8,7],t:"rest",title:"พักเต็มวัน",chips:["ก่อนวันวัดผล"],detail:"พรุ่งนี้วันสำคัญ นอนให้พอ"},
+ {d:[7,7],t:"easy",title:"วิ่งสบายสั้นๆ 4K",chips:["4 กม.","สบายๆ"],detail:"วิ่งเบาๆ สั้นๆ สัปดาห์ taper ลดโหลดก่อนวัดผล"},
+ {d:[8,7],t:"rest",title:"พักเต็มวัน",chips:["ก่อนวันวัดผล"],detail:"พักให้ขาสด พรุ่งนี้วันวัดผล นอนให้พอ"},
  {d:[9,7],t:"test",title:"วันวัดผล 5K",chips:["5 กม.","คุม HR 145–150"],detail:"วิ่ง 5K คุม HR 145–150 นิ่งๆ ตลอด แล้วดู pace<br><br>เทียบ 4 มิ.ย. (HR 146 → 9:09/กม.) — <b>ถ้า pace เร็วขึ้นที่ HR เท่าเดิม = หัวใจแข็งแรงขึ้นจริง</b>",note:"เสร็จแล้วส่งผลมาให้ดูด้วยนะ 📈"},
  {d:[10,7],t:"walk",title:"เดินฉลองจบแผน 🎉",chips:["ชิลล์ๆ ตามใจ"],detail:"ครบ 4 สัปดาห์! เดินสบายๆ ภูมิใจกับตัวเองได้เต็มที่ ทำตามแผนได้ครบคือชัยชนะแรกแล้ว"},
 ];
@@ -221,7 +233,7 @@ function computeAdvice(){
   if(st==="done") return {at:"var(--good)",lab:"วันนี้",ttl:"ทำครบแล้ว 🎉",bd:"เยี่ยมมากหนุ่ย "+today.title+"เรียบร้อย พักผ่อนให้เต็มที่"};
   let consec=0;
   for(let i=ti-1;i>=0;i--){ const p=PLAN[i],s=statuses[keyOf(p.d)]; if(s==="done"&&ACTIVE(p.t)) consec++; else break; }
-  if(ACTIVE(today.t)&&consec>=3) return {at:"var(--quality)",lab:"ปรับแผน · เตือน",ttl:"ทำหนักมา "+consec+" วันติดแล้ว",bd:"วันนี้แนะนำ <b>พักหรือเดินเบาๆ</b> แทน "+today.title+" — ให้หัวใจได้ฟื้น สำคัญกว่าฝืนตามตาราง"};
+  if(ACTIVE(today.t)&&consec>=5) return {at:"var(--quality)",lab:"ปรับแผน · เตือน",ttl:"ทำติดกัน "+consec+" วันแล้ว",bd:"วันนี้แนะนำ <b>พักหรือเดินเบาๆ</b> แทน "+today.title+" — แม้วิ่งช้า ร่างกายก็ต้องการวันฟื้นบ้าง ฟังร่างกายเป็นหลัก"};
   if(ti>0){ const y=PLAN[ti-1], ys=statuses[keyOf(y.d)];
     if(ys==="skipped"){
       if(KEY_SESSION(y.t)){ let slot=null; for(let i=ti;i<PLAN.length;i++){ if(PLAN[i].t==="rest"&&!statuses[keyOf(PLAN[i].d)]){ slot=PLAN[i]; break; } }
@@ -247,6 +259,21 @@ function render(){
   document.getElementById("ringPct").textContent=pct+"%";
   document.getElementById("progSmall").textContent=`ทำตามแผนแล้ว ${doneCount} จาก ${total} วัน`;
   document.getElementById("progBig").textContent=doneCount===0?"เริ่มกันเลย!":(pct>=100?"จบแผนแล้ว! 🎉":"กำลังไปได้สวย");
+
+  // dashboard
+  const RUN_T=["easy","long","quality","combo","test"], KM={easy:5,combo:5,quality:5,long:7,test:5,walk:4};
+  let nRun=0,nWeights=0,nRest=0,totalKm=0;
+  for(const k in statuses){ if(statuses[k]!=="done") continue; const p=PLAN.find(x=>keyOf(x.d)===k); if(!p) continue;
+    if(RUN_T.includes(p.t)){ nRun++; totalKm+=KM[p.t]||0; }
+    if(p.t==="weights"||p.t==="combo") nWeights++;
+    if(p.t==="rest") nRest++; }
+  const tiles=[
+    {ic:"🏃",num:nRun,unit:"",lab:"วันวิ่ง",c:"var(--easy)"},
+    {ic:"📏",num:totalKm,unit:"กม.",lab:"ระยะรวม (ประมาณ)",c:"var(--long)"},
+    {ic:"🏋️",num:nWeights,unit:"",lab:"วันเวท",c:"var(--weights)"},
+    {ic:"😴",num:nRest,unit:"",lab:"วันพัก",c:"var(--rest)"},
+  ];
+  document.getElementById("dash").innerHTML=tiles.map(d=>`<div class="dtile" style="--dc:${d.c}"><div class="dic">${d.ic}</div><div class="dnum">${d.num}${d.unit?` <small>${d.unit}</small>`:""}</div><div class="dlab">${d.lab}</div></div>`).join("");
   const ti=todayIndex(); let streak=0; const start=ti>=0?ti:PLAN.length-1;
   for(let i=start;i>=0;i--){ const s=statuses[keyOf(PLAN[i].d)]; if(s==="done") streak++; else break; }
   const sl=document.getElementById("streakLine");
