@@ -132,7 +132,7 @@ h1{font-family:'Prompt',sans-serif; font-weight:800; font-size:clamp(26px,7vw,34
     <span><i class="dot" style="background:var(--easy)"></i>วิ่งสบาย</span>
     <span><i class="dot" style="background:var(--long)"></i>วิ่งยาวช้า</span>
     <span><i class="dot" style="background:var(--quality)"></i>วิ่งคุณภาพ</span>
-    <span><i class="dot" style="background:var(--weights)"></i>วิ่ง+เวท</span>
+    <span><i class="dot" style="background:var(--weights)"></i>เวท</span>
     <span><i class="dot" style="background:var(--rest)"></i>พัก</span>
   </div>
   <div class="pager">
@@ -188,7 +188,7 @@ async function loadFromSheets(){ if(!CONFIG.SHEETS_WEBAPP_URL) return null;
 const TYPES={easy:{label:"วิ่งสบาย",ic:"🏃",color:"var(--easy)"},long:{label:"วิ่งยาวช้า",ic:"🛣️",color:"var(--long)"},quality:{label:"วิ่งคุณภาพ",ic:"⚡",color:"var(--quality)"},weights:{label:"เวท",ic:"🏋️",color:"var(--weights)"},combo:{label:"วิ่ง+เวท",ic:"🏃",color:"var(--weights)"},rest:{label:"พัก",ic:"😴",color:"var(--rest)"},walk:{label:"เดิน",ic:"🚶",color:"var(--walk)"},test:{label:"วัดผล",ic:"📊",color:"var(--test)"}};
 const THAI_DOW=["อาทิตย์","จันทร์","อังคาร","พุธ","พฤหัสบดี","ศุกร์","เสาร์"];
 const MO={7:"ก.ค.",8:"ส.ค.",9:"ก.ย."};
-const CD='<b>เช้า — วิ่งสบาย 5K:</b> วิ่งต่อเนื่องช้าๆ คุยได้ (talk test)<br><b>เย็น — เวท 30–40 นาที:</b> สควอท · ลันจ์ · วิดพื้น · โรว์ · แพลงก์ (2–3 เซ็ต) เน้นน่อง + ขาเดียว กันเจ็บนักวิ่ง<br>แยกเช้า–เย็น ให้แต่ละอันมีคุณภาพ และเหลือวันพักเต็มๆ ได้';
+const WD='<b>วอร์มก่อน 5 นาที</b><br><b>ท่าหลัก (2–3 เซ็ต/ท่า):</b><ol><li>สควอท 10–12 ครั้ง</li><li>ลันจ์ ข้างละ 8–10</li><li>วิดพื้น 8–12</li><li>โรว์ (ดัมเบล/ยางยืด) 10–12</li><li><b>ยกน่อง (calf raise) 15–20</b> — กันเจ็บนักวิ่ง</li><li><b>ยืนขาเดียวทรงตัว</b> ข้างละ 30 วิ</li><li>แพลงก์ 30–45 วิ</li></ol>พัก 60–90 วิ ระหว่างเซ็ต';
 const INTERVAL='<ol><li>วอร์ม 10 นาที</li><li><b>เร่ง 3 นาที</b> HR 160–168 (เหนื่อยแต่พูดเป็นวลีได้)</li><li><b>จ๊อกเบาๆ 2 นาที</b> (ไม่ใช่เดิน) ให้ HR ค่อยๆ ลง</li><li>ทำครบ <b>5 รอบ</b></li><li>คูลดาวน์ 10 นาที</li></ol>';
 const TEMPO='<ol><li>วอร์ม 10 นาที ช้าๆ</li><li><b>วิ่งเทมโป 20 นาที</b> ต่อเนื่องไม่พัก — เร็วพอที่พูดได้ทีละคำ ไม่ใช่ทั้งประโยค (HR ~158–165)</li><li>คูลดาวน์ 10 นาที</li></ol>';
 function longDetail(km,tag){ let s="วิ่งช้าที่สุดในสัปดาห์ — พูดได้ตลอดทาง เดินได้ถ้าเมื่อย เป้าคือ 'ถึงระยะ "+km+" กม.' ไม่ใช่ความเร็ว";
@@ -202,27 +202,34 @@ function addD(dt,n){ const x=new Date(dt); x.setDate(x.getDate()+n); return x; }
 function mk(dt,t,title,chips,detail,km,note){ const o={d:dmObj(dt),t,title,chips,detail,km}; if(note) o.note=note; return o; }
 
 const PLAN=[];
+function pushLead(sat,label){
+  const D=[
+    mk(sat,"rest","พักเต็มวัน",["สุดสัปดาห์"],"พักสบายๆ เก็บแรง",0),
+    mk(addD(sat,1),"rest","พักเต็มวัน",["ฟื้นตัว"],"พักก่อนเข้าสัปดาห์ใหม่ นอนให้พอ",0),
+    mk(addD(sat,2),"rest","พักฟื้น 💤",["ฟังร่างกาย"],"วันนี้พักเพราะนอนน้อย งานหนัก ปวดหัว — ตัดสินใจถูกแล้ว ฝืนไปได้ไม่คุ้ม พรุ่งนี้ค่อยเริ่มเบาๆ",0),
+    mk(addD(sat,3),"easy","วิ่งสบาย 5K",["5 กม.","สบาย พูดได้"],"กลับมาเบาๆ ช้า นิ่ง สบาย ไม่ต้องรีบ",5),
+    mk(addD(sat,4),"quality","วิ่งคุณภาพ · อินเทอร์วัล",["5 × 3 นาที","วันหนักวันเดียว"],INTERVAL,5,"ห้ามทะลุ 170 — วันหนักวันเดียวของสัปดาห์"),
+    mk(addD(sat,5),"weights","เวทเต็มตัว",["30–40 นาที"],WD,0),
+    mk(addD(sat,6),"easy","วิ่งสบายสั้นๆ 4–5K",["4–5 กม.","เบาๆ ก่อนวันยาว"],"วิ่งเบาๆ ให้ขาสดก่อนวันยาวพรุ่งนี้",4.5),
+  ];
+  D.forEach(o=>{ o.wk=label; PLAN.push(o); });
+}
 function pushWeek(sat,label,opts){
-  const D=[];
-  if(opts.lead){
-    D.push(mk(sat,"rest","พักเต็มวัน",["สุดสัปดาห์"],"พักสบายๆ เก็บแรง ก่อนเริ่มบล็อกใหม่",0));
-    D.push(mk(addD(sat,1),"rest","พักเต็มวัน",["ฟื้นตัว"],"พักก่อนเริ่มบล็อกใหม่จันทร์นี้ นอนให้พอ",0));
-  } else {
-    const peak=opts.tag==="peak";
-    D.push(mk(sat,"long","วิ่งยาวช้า "+opts.km+"K"+(peak?" 🎯":""),[opts.km+" กม.","ช้าที่สุด","พูดได้ตลอด"],longDetail(opts.km,opts.tag),opts.km,
-      peak?"ระยะเป้าหมาย 10K — วิ่งช้าๆ ค่อยๆ เก็บ":(opts.tag==="down"?"สัปดาห์ถอย เบาลงหน่อย ให้ร่างกายซ่อม":(opts.tag==="cele"?"ฉลองหลังพิชิต 10K 🎉":null))));
-    D.push(mk(addD(sat,1),"rest","พักเต็มวัน",["ฟื้นจากวิ่งยาว"],"เมื่อวานวิ่งยาว วันนี้ให้ขาได้พักจริงๆ",0));
-  }
-  D.push(mk(addD(sat,2),"combo","วิ่งสบาย + เวท",["เช้า: วิ่ง 5K","เย็น: เวท"],CD,5));
-  D.push(mk(addD(sat,3),"easy","วิ่งสบาย 5K",["5 กม.","สบาย พูดได้"],"ช้า นิ่ง สบาย เก็บเวลาในโซนแอโรบิก ยิ่งวันสบายเยอะ ฐานยิ่งแน่น",5));
-  const tempo=opts.q==="tempo";
-  D.push(mk(addD(sat,4),"quality",tempo?"วิ่งคุณภาพ · เทมโป":"วิ่งคุณภาพ · อินเทอร์วัล",[tempo?"เทมโป 20 นาที":"5 × 3 นาที","วันหนักวันเดียว"],tempo?TEMPO:INTERVAL,5,"ห้ามทะลุ 170 — วันหนักวันเดียวของสัปดาห์"));
-  D.push(mk(addD(sat,5),"combo","วิ่งสบาย + เวท",["เช้า: วิ่ง 5K","เย็น: เวท"],CD,5));
-  D.push(mk(addD(sat,6),"rest","พักเต็มวัน",["ไม่วิ่ง ไม่เวท"],"พักให้เต็มที่ ก่อนวิ่งยาววันเสาร์",0));
+  const peak=opts.tag==="peak", tempo=opts.q==="tempo";
+  const D=[
+    mk(sat,"long","วิ่งยาวช้า "+opts.km+"K"+(peak?" 🎯":""),[opts.km+" กม.","ช้าที่สุด","พูดได้ตลอด"],longDetail(opts.km,opts.tag),opts.km,
+      peak?"ระยะเป้าหมาย 10K — วิ่งช้าๆ ค่อยๆ เก็บ":(opts.tag==="down"?"สัปดาห์ถอย เบาลงหน่อย ให้ร่างกายซ่อม":(opts.tag==="cele"?"ฉลองหลังพิชิต 10K 🎉":null))),
+    mk(addD(sat,1),"rest","พักเต็มวัน",["ฟื้นจากวิ่งยาว"],"เมื่อวานวิ่งยาว วันนี้ให้ขาได้พักจริงๆ นอนให้พอ",0),
+    mk(addD(sat,2),"weights","เวทเต็มตัว",["30–40 นาที","หลังพักมาสดๆ"],WD,0,"เพิ่งพักมา ร่างกายสด ทำให้เต็มที่ได้"),
+    mk(addD(sat,3),"easy","วิ่งสบาย 5K",["5 กม.","สบาย พูดได้"],"ช้า นิ่ง สบาย เก็บเวลาในโซนแอโรบิก ยิ่งวันสบายเยอะ ฐานยิ่งแน่น",5),
+    mk(addD(sat,4),"quality",tempo?"วิ่งคุณภาพ · เทมโป":"วิ่งคุณภาพ · อินเทอร์วัล",[tempo?"เทมโป 20 นาที":"5 × 3 นาที","วันหนักวันเดียว"],tempo?TEMPO:INTERVAL,5,"ห้ามทะลุ 170 — วันหนักวันเดียวของสัปดาห์"),
+    mk(addD(sat,5),"weights","เวทเต็มตัว",["30–40 นาที"],WD,0,"ถ้าขาล้าจากวันคุณภาพเมื่อวาน เน้นช่วงบน/แกนกลาง เบาขาได้"),
+    mk(addD(sat,6),"easy","วิ่งสบายสั้นๆ 4–5K",["4–5 กม.","เบาๆ ก่อนวันยาว"],"วิ่งเบาๆ สั้นๆ ให้ขาสดก่อนวิ่งยาวพรุ่งนี้",4.5),
+  ];
   D.forEach(o=>{ o.wk=label; PLAN.push(o); });
 }
 const START_SAT=new Date(2026,6,4);
-pushWeek(START_SAT,"ช่วงนี้",{lead:true});
+pushLead(START_SAT,"ช่วงนี้");
 const LONGS=[7,7.5,8,6,8.5,9,7,9.5,10,7];
 const LTAG =["","","","down","","","down","","peak","cele"];
 const LQ   =["int","tempo","int","tempo","int","tempo","int","tempo","int","tempo"];
@@ -280,7 +287,7 @@ function render(){
   document.getElementById("progBig").textContent=doneCount===0?"เริ่มกันเลย!":(pct>=100?"จบแผนแล้ว! 🎉":"กำลังไปได้สวย");
 
   // dashboard
-  const RUN_T=["easy","long","quality","combo"];
+  const RUN_T=["easy","long","quality"];
   let nRun=0,nWeights=0,nRest=0,totalKm=0;
   for(const k in statuses){ if(statuses[k]!=="done") continue; const p=PLAN.find(x=>keyOf(x.d)===k); if(!p) continue;
     if(RUN_T.includes(p.t)){ nRun++; totalKm+=p.km||0; }
