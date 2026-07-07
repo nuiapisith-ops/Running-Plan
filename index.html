@@ -69,11 +69,12 @@ h1{font-family:'Prompt',sans-serif; font-weight:800; font-size:clamp(26px,7vw,34
 .badge{position:absolute; top:-6px; right:-5px; width:20px; height:20px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:800; border:2px solid var(--bg); font-family:'Prompt',sans-serif}
 .badge.done{background:var(--good); color:#0B0E13}
 .badge.skip{background:var(--skip); color:#0B0E13}
+.badge.rest{background:var(--rest); color:#0B0E13; font-size:10px}
 .day.done{background:linear-gradient(180deg, rgba(95,208,138,.10), var(--card))}
 .day.skipped{opacity:.42}
 .day.skipped .tag, .day.skipped .num{text-decoration:line-through}
 .todaypin{position:absolute; bottom:-7px; left:50%; transform:translateX(-50%); background:var(--c); color:#0B0E13; font-size:8px; font-weight:800; padding:1.5px 7px; border-radius:99px; font-family:'Prompt',sans-serif; white-space:nowrap}
-.day.quality:not(.done):not(.skipped) .ic{animation:pulse 2.2s ease-in-out infinite}
+.day.quality:not(.done) .ic{animation:pulse 2.2s ease-in-out infinite}
 @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.16)}}
 .rules{background:var(--card); border:1px solid var(--line); border-radius:16px; padding:15px 17px; margin-top:18px; font-size:13px; color:var(--muted); line-height:1.7}
 .rules b{color:var(--ink); font-weight:600}
@@ -140,7 +141,7 @@ h1{font-family:'Prompt',sans-serif; font-weight:800; font-size:clamp(26px,7vw,34
     <div class="pglabel" id="pgLabel">—</div>
     <button id="pgNext" class="pgbtn" aria-label="สัปดาห์ถัดไป">▶</button>
   </div>
-  <div class="dow"><div></div><div>ส</div><div>อา</div><div>จ</div><div>อ</div><div>พ</div><div>พฤ</div><div>ศ</div></div>
+  <div class="dow"><div></div><div>จ</div><div>อ</div><div>พ</div><div>พฤ</div><div>ศ</div><div>ส</div><div>อา</div></div>
   <div id="cal"></div>
   <div class="rules">
     <div class="rt">หลักของเฟสนี้ · ค่อยๆ ไป ไม่เจ็บ</div>
@@ -164,7 +165,7 @@ h1{font-family:'Prompt',sans-serif; font-weight:800; font-size:clamp(26px,7vw,34
   <div class="s-note" id="sNote" hidden></div>
   <div class="s-actions">
     <button class="btn btn-done" id="btnDone">✓ ทำแล้ว</button>
-    <button class="btn btn-skip" id="btnSkip">ข้ามวันนี้</button>
+    <button class="btn btn-skip" id="btnSkip">😴 เปลี่ยนเป็นวันพัก</button>
     <button class="btn-clear" id="btnClear" hidden>ล้างสถานะวันนี้</button>
     <button class="btn-close" id="btnClose">ปิด</button>
   </div>
@@ -202,38 +203,27 @@ function addD(dt,n){ const x=new Date(dt); x.setDate(x.getDate()+n); return x; }
 function mk(dt,t,title,chips,detail,km,note){ const o={d:dmObj(dt),t,title,chips,detail,km}; if(note) o.note=note; return o; }
 
 const PLAN=[];
-function pushLead(sat,label){
-  const D=[
-    mk(sat,"rest","พักเต็มวัน",["สุดสัปดาห์"],"พักสบายๆ เก็บแรง",0),
-    mk(addD(sat,1),"rest","พักเต็มวัน",["ฟื้นตัว"],"พักก่อนเข้าสัปดาห์ใหม่ นอนให้พอ",0),
-    mk(addD(sat,2),"rest","พักฟื้น 💤",["ฟังร่างกาย"],"วันนี้พักเพราะนอนน้อย งานหนัก ปวดหัว — ตัดสินใจถูกแล้ว ฝืนไปได้ไม่คุ้ม พรุ่งนี้ค่อยเริ่มเบาๆ",0),
-    mk(addD(sat,3),"easy","วิ่งสบาย 5K",["5 กม.","สบาย พูดได้"],"กลับมาเบาๆ ช้า นิ่ง สบาย ไม่ต้องรีบ",5),
-    mk(addD(sat,4),"quality","วิ่งคุณภาพ · อินเทอร์วัล",["5 × 3 นาที","วันหนักวันเดียว"],INTERVAL,5,"ห้ามทะลุ 170 — วันหนักวันเดียวของสัปดาห์"),
-    mk(addD(sat,5),"weights","เวทเต็มตัว",["30–40 นาที"],WD,0),
-    mk(addD(sat,6),"easy","วิ่งสบายสั้นๆ 4–5K",["4–5 กม.","เบาๆ ก่อนวันยาว"],"วิ่งเบาๆ ให้ขาสดก่อนวันยาวพรุ่งนี้",4.5),
-  ];
-  D.forEach(o=>{ o.wk=label; PLAN.push(o); });
-}
-function pushWeek(sat,label,opts){
+function pushWeek(mon,label,opts){
   const peak=opts.tag==="peak", tempo=opts.q==="tempo";
   const D=[
-    mk(sat,"long","วิ่งยาวช้า "+opts.km+"K"+(peak?" 🎯":""),[opts.km+" กม.","ช้าที่สุด","พูดได้ตลอด"],longDetail(opts.km,opts.tag),opts.km,
+    mk(mon,"weights","เวทเต็มตัว",["30–40 นาที","ต้นสัปดาห์ ร่างกายสด"],WD,0,"หลังพักสุดสัปดาห์มา ร่างกายสด ทำให้เต็มที่ได้"),
+    mk(addD(mon,1),"easy","วิ่งสบาย 5K",["5 กม.","สบาย พูดได้"],"ช้า นิ่ง สบาย เก็บเวลาในโซนแอโรบิก ยิ่งวันสบายเยอะ ฐานยิ่งแน่น",5),
+    mk(addD(mon,2),"quality",tempo?"วิ่งคุณภาพ · เทมโป":"วิ่งคุณภาพ · อินเทอร์วัล",[tempo?"เทมโป 20 นาที":"5 × 3 นาที","วันหนักวันเดียว"],tempo?TEMPO:INTERVAL,5,"ห้ามทะลุ 170 — วันหนักวันเดียวของสัปดาห์"),
+    mk(addD(mon,3),"weights","เวทเต็มตัว",["30–40 นาที"],WD,0,"ถ้าขาล้าจากวันคุณภาพเมื่อวาน เน้นช่วงบน/แกนกลาง เบาขาได้"),
+    mk(addD(mon,4),"easy","วิ่งสบายสั้นๆ 4–5K",["4–5 กม.","เบาๆ ก่อนวันยาว"],"วิ่งเบาๆ สั้นๆ ให้ขาสดก่อนวิ่งยาวพรุ่งนี้",4.5),
+    mk(addD(mon,5),"long","วิ่งยาวช้า "+opts.km+"K"+(peak?" 🎯":""),[opts.km+" กม.","ช้าที่สุด","พูดได้ตลอด"],longDetail(opts.km,opts.tag),opts.km,
       peak?"ระยะเป้าหมาย 10K — วิ่งช้าๆ ค่อยๆ เก็บ":(opts.tag==="down"?"สัปดาห์ถอย เบาลงหน่อย ให้ร่างกายซ่อม":(opts.tag==="cele"?"ฉลองหลังพิชิต 10K 🎉":null))),
-    mk(addD(sat,1),"rest","พักเต็มวัน",["ฟื้นจากวิ่งยาว"],"เมื่อวานวิ่งยาว วันนี้ให้ขาได้พักจริงๆ นอนให้พอ",0),
-    mk(addD(sat,2),"weights","เวทเต็มตัว",["30–40 นาที","หลังพักมาสดๆ"],WD,0,"เพิ่งพักมา ร่างกายสด ทำให้เต็มที่ได้"),
-    mk(addD(sat,3),"easy","วิ่งสบาย 5K",["5 กม.","สบาย พูดได้"],"ช้า นิ่ง สบาย เก็บเวลาในโซนแอโรบิก ยิ่งวันสบายเยอะ ฐานยิ่งแน่น",5),
-    mk(addD(sat,4),"quality",tempo?"วิ่งคุณภาพ · เทมโป":"วิ่งคุณภาพ · อินเทอร์วัล",[tempo?"เทมโป 20 นาที":"5 × 3 นาที","วันหนักวันเดียว"],tempo?TEMPO:INTERVAL,5,"ห้ามทะลุ 170 — วันหนักวันเดียวของสัปดาห์"),
-    mk(addD(sat,5),"weights","เวทเต็มตัว",["30–40 นาที"],WD,0,"ถ้าขาล้าจากวันคุณภาพเมื่อวาน เน้นช่วงบน/แกนกลาง เบาขาได้"),
-    mk(addD(sat,6),"easy","วิ่งสบายสั้นๆ 4–5K",["4–5 กม.","เบาๆ ก่อนวันยาว"],"วิ่งเบาๆ สั้นๆ ให้ขาสดก่อนวิ่งยาวพรุ่งนี้",4.5),
+    mk(addD(mon,6),"rest","พักเต็มวัน",["ฟื้นจากวิ่งยาว"],"เมื่อวานวิ่งยาว วันนี้ให้ขาได้พักจริงๆ นอนให้พอ",0),
   ];
   D.forEach(o=>{ o.wk=label; PLAN.push(o); });
 }
-const START_SAT=new Date(2026,6,4);
-pushLead(START_SAT,"ช่วงนี้");
+const START_MON=new Date(2026,6,6);
 const LONGS=[7,7.5,8,6,8.5,9,7,9.5,10,7];
 const LTAG =["","","","down","","","down","","peak","cele"];
 const LQ   =["int","tempo","int","tempo","int","tempo","int","tempo","int","tempo"];
-for(let i=0;i<10;i++){ pushWeek(addD(START_SAT,7*(i+1)),"สัปดาห์ "+(i+1),{km:LONGS[i],tag:LTAG[i],q:LQ[i]==="tempo"?"tempo":"int"}); }
+for(let i=0;i<10;i++){ pushWeek(addD(START_MON,7*i),"สัปดาห์ "+(i+1),{km:LONGS[i],tag:LTAG[i],q:LQ[i]==="tempo"?"tempo":"int"}); }
+PLAN[0]=mk(START_MON,"rest","พักฟื้น 💤",["ฟังร่างกาย"],"วันนี้พักเพราะนอนน้อย งานหนัก ปวดหัว — ตัดสินใจถูกแล้ว ฝืนไปได้ไม่คุ้ม พรุ่งนี้ค่อยเริ่มเบาๆ",0);
+PLAN[0].wk="สัปดาห์ 1";
 
 let statuses={};
 try { statuses=JSON.parse(Store.get("nui-run-status")||"{}"); } catch(e){ statuses={}; }
@@ -251,16 +241,15 @@ function computeAdvice(){
     return {at:"var(--good)",lab:"สรุป",ttl:"จบเฟส 1 แล้ว!",bd:"ทำครบเฟสสู่ 10K "+done+" วัน เก่งมาก! พร้อมเมื่อไหร่บอกได้ ผมต่อเฟส 2 (ปรับฐาน) ให้เลย"}; }
   const today=PLAN[ti], st=statuses[keyOf(today.d)];
   if(st==="done") return {at:"var(--good)",lab:"วันนี้",ttl:"ทำครบแล้ว 🎉",bd:"เยี่ยมมากหนุ่ย "+today.title+"เรียบร้อย พักผ่อนให้เต็มที่"};
+  if(st==="rest") return {at:"var(--rest)",lab:"วันนี้",ttl:"วันนี้พัก 😴",bd:"เปลี่ยนเป็นวันพักแล้ว — พักคือส่วนหนึ่งของแผน ไม่ใช่ความผิด พรุ่งนี้ค่อยลุยต่อ"};
   let consec=0;
   for(let i=ti-1;i>=0;i--){ const p=PLAN[i],s=statuses[keyOf(p.d)]; if(s==="done"&&ACTIVE(p.t)) consec++; else break; }
   if(ACTIVE(today.t)&&consec>=5) return {at:"var(--quality)",lab:"ปรับแผน · เตือน",ttl:"ทำติดกัน "+consec+" วันแล้ว",bd:"วันนี้แนะนำ <b>พักหรือเดินเบาๆ</b> แทน "+today.title+" — แม้วิ่งช้า ร่างกายก็ต้องการวันฟื้นบ้าง ฟังร่างกายเป็นหลัก"};
   if(ti>0){ const y=PLAN[ti-1], ys=statuses[keyOf(y.d)];
-    if(ys==="skipped"){
-      if(KEY_SESSION(y.t)){ let slot=null; for(let i=ti;i<PLAN.length;i++){ if(PLAN[i].t==="rest"&&!statuses[keyOf(PLAN[i].d)]){ slot=PLAN[i]; break; } }
+    if(ys==="rest"&&KEY_SESSION(y.t)){ let slot=null; for(let i=ti;i<PLAN.length;i++){ if(PLAN[i].t==="rest"&&!statuses[keyOf(PLAN[i].d)]){ slot=PLAN[i]; break; } }
         const where=slot?(" ลองขยับไปทำวัน"+THAI_DOW[new Date(2026,slot.d[1]-1,slot.d[0]).getDay()]+"ที่ "+slot.d[0]+" "+MO[slot.d[1]]+" (วันพัก) แทน"):"";
-        return {at:"var(--long)",lab:"ปรับแผน",ttl:"เมื่อวานข้าม"+y.title,bd:"ไม่ต้องอัดชดเชยวันนี้ — "+y.title+"เป็นวันสำคัญ"+where+"<br>ส่วนวันนี้ทำตามแผน: <b>"+today.title+"</b>"}; }
-      return {at:"var(--easy)",lab:"ปรับแผน",ttl:"เมื่อวานข้ามไป ไม่เป็นไร",bd:"วันสบาย/เวทข้ามได้ ไม่ต้องชดเชย วันนี้ทำตามแผนต่อ: <b>"+today.title+"</b>"};
-    } }
+        return {at:"var(--long)",lab:"ปรับแผน",ttl:"เมื่อวานพัก แทน"+y.title,bd:"พักเป็นเรื่องดี ไม่ต้องอัดชดเชยวันนี้ — แต่ "+y.title+" เป็นวันสำคัญ"+where+"<br>ส่วนวันนี้ทำตามแผน: <b>"+today.title+"</b>"}; }
+  }
   return {at:TYPES[today.t].color,lab:"แผนวันนี้",ttl:today.title,bd:(today.chips.filter(c=>c).join(" · ")||"")+(today.note?"<br>"+today.note:"")};
 }
 
@@ -269,10 +258,11 @@ function render(){
   const startW=page*PER, endW=Math.min(startW+PER,WEEKS);
   let html="";
   for(let w=startW;w<endW;w++){ html+=`<div class="week"><div class="wk">${PLAN[w*7].wk}</div>`;
-    for(let i=0;i<7;i++){ const idx=w*7+i,p=PLAN[idx],ty=TYPES[p.t],k=keyOf(p.d),s=statuses[k];
+    for(let i=0;i<7;i++){ const idx=w*7+i,p=PLAN[idx],k=keyOf(p.d),s=statuses[k];
+      const isRest=(s==="rest"), ty=TYPES[isRest?"rest":p.t];
       const n=new Date(); const tdy=(n.getFullYear()===2026&&n.getMonth()+1===p.d[1]&&n.getDate()===p.d[0]);
-      let badge=""; if(s==="done") badge=`<span class="badge done">✓</span>`; else if(s==="skipped") badge=`<span class="badge skip">✕</span>`;
-      html+=`<button class="day t-${p.t} ${p.t==='quality'?'quality':''} ${tdy?'today':''} ${s==='done'?'done':''} ${s==='skipped'?'skipped':''}" data-i="${idx}" aria-label="${p.d[0]} ${MO[p.d[1]]} ${p.title}"><span class="num">${p.d[0]}</span><span class="mo">${MO[p.d[1]]}</span><span class="ic">${ty.ic}</span><span class="tag">${ty.label}</span>${badge}${tdy?'<span class="todaypin">วันนี้</span>':''}</button>`; }
+      let badge=""; if(s==="done") badge=`<span class="badge done">✓</span>`; else if(isRest&&p.t!=="rest") badge=`<span class="badge rest">😴</span>`;
+      html+=`<button class="day t-${isRest?'rest':p.t} ${(!isRest&&p.t==='quality')?'quality':''} ${tdy?'today':''} ${s==='done'?'done':''}" data-i="${idx}" aria-label="${p.d[0]} ${MO[p.d[1]]} ${p.title}"><span class="num">${p.d[0]}</span><span class="mo">${MO[p.d[1]]}</span><span class="ic">${ty.ic}</span><span class="tag">${ty.label}</span>${badge}${tdy?'<span class="todaypin">วันนี้</span>':''}</button>`; }
     html+=`</div>`; }
   document.getElementById("cal").innerHTML=html;
   document.getElementById("pgLabel").textContent=PLAN[startW*7].wk+" – "+PLAN[(endW-1)*7].wk;
@@ -280,7 +270,7 @@ function render(){
   document.getElementById("pgNext").disabled=(page>=Math.ceil(WEEKS/PER)-1);
 
   const planKeys=new Set(PLAN.map(p=>keyOf(p.d)));
-  const doneCount=Object.keys(statuses).filter(k=>planKeys.has(k)&&statuses[k]==="done").length, total=PLAN.length, pct=Math.round(doneCount/total*100);
+  const doneCount=Object.keys(statuses).filter(k=>planKeys.has(k)&&(statuses[k]==="done"||statuses[k]==="rest")).length, total=PLAN.length, pct=Math.round(doneCount/total*100);
   document.getElementById("ringFill").style.strokeDashoffset=(163.4*(1-doneCount/total)).toFixed(1);
   document.getElementById("ringPct").textContent=pct+"%";
   document.getElementById("progSmall").textContent=`ทำตามแผนแล้ว ${doneCount} จาก ${total} วัน`;
@@ -289,10 +279,12 @@ function render(){
   // dashboard
   const RUN_T=["easy","long","quality"];
   let nRun=0,nWeights=0,nRest=0,totalKm=0;
-  for(const k in statuses){ if(statuses[k]!=="done") continue; const p=PLAN.find(x=>keyOf(x.d)===k); if(!p) continue;
+  for(const k in statuses){ const s=statuses[k]; const p=PLAN.find(x=>keyOf(x.d)===k); if(!p) continue;
+    if(s==="rest"){ nRest++; continue; }
+    if(s!=="done") continue;
     if(RUN_T.includes(p.t)){ nRun++; totalKm+=p.km||0; }
-    if(p.t==="weights"||p.t==="combo") nWeights++;
-    if(p.t==="rest") nRest++; }
+    else if(p.t==="weights") nWeights++;
+    else if(p.t==="rest") nRest++; }
   const tiles=[
     {ic:"🏃",num:nRun,unit:"",lab:"วันวิ่ง",c:"var(--easy)"},
     {ic:"📏",num:Math.round(totalKm*10)/10,unit:"กม.",lab:"ระยะรวม (ประมาณ)",c:"var(--long)"},
@@ -301,9 +293,9 @@ function render(){
   ];
   document.getElementById("dash").innerHTML=tiles.map(d=>`<div class="dtile" style="--dc:${d.c}"><div class="dic">${d.ic}</div><div class="dnum">${d.num}${d.unit?` <small>${d.unit}</small>`:""}</div><div class="dlab">${d.lab}</div></div>`).join("");
   const ti=todayIndex(); let streak=0; const start=ti>=0?ti:PLAN.length-1;
-  for(let i=start;i>=0;i--){ const s=statuses[keyOf(PLAN[i].d)]; if(s==="done") streak++; else break; }
+  for(let i=start;i>=0;i--){ const s=statuses[keyOf(PLAN[i].d)]; if(s==="done"||s==="rest") streak++; else break; }
   const sl=document.getElementById("streakLine");
-  if(streak>=2){ sl.hidden=false; document.getElementById("streakN").textContent="ทำต่อเนื่อง "+streak+" วันติด"; } else sl.hidden=true;
+  if(streak>=2){ sl.hidden=false; document.getElementById("streakN").textContent="ตามแผนต่อเนื่อง "+streak+" วัน"; } else sl.hidden=true;
 
   const a=computeAdvice(), adv=document.getElementById("advice");
   adv.style.setProperty("--at",a.at);
@@ -320,13 +312,13 @@ function openSheet(i){ curIdx=i; const p=PLAN[i],ty=TYPES[p.t],k=keyOf(p.d),s=st
   sheet.style.setProperty("--sc",ty.color);
   document.getElementById("sDate").textContent=`วัน${THAI_DOW[date.getDay()]}ที่ ${p.d[0]} ${MO[p.d[1]]} 2026 · ${PLAN[i].wk}`;
   const ss=document.getElementById("sStatus");
-  if(s==="done"){ ss.textContent="✓ ทำแล้ว"; ss.style.color="var(--good)"; } else if(s==="skipped"){ ss.textContent="✕ ข้ามไป"; ss.style.color="var(--skip)"; } else ss.textContent="";
+  if(s==="done"){ ss.textContent="✓ ทำแล้ว"; ss.style.color="var(--good)"; } else if(s==="rest"){ ss.textContent="😴 เปลี่ยนเป็นวันพักแล้ว"; ss.style.color="var(--skip)"; } else ss.textContent="";
   document.getElementById("sTitle").innerHTML=`<span class="ic">${ty.ic}</span>${p.title}`;
   document.getElementById("sChips").innerHTML=p.chips.filter(c=>c).map(c=>`<span class="chip">${c}</span>`).join("");
   document.getElementById("sDetail").innerHTML=p.detail;
   const note=document.getElementById("sNote"); if(p.note){ note.hidden=false; note.textContent=p.note; } else note.hidden=true;
   document.getElementById("btnDone").classList.toggle("on",s==="done");
-  document.getElementById("btnSkip").classList.toggle("on",s==="skipped");
+  document.getElementById("btnSkip").classList.toggle("on",s==="rest");
   document.getElementById("btnClear").hidden=!s;
   backdrop.classList.add("show"); sheet.classList.add("show");
   lastFocus=document.activeElement; document.getElementById("btnClose").focus();
@@ -336,13 +328,14 @@ document.getElementById("cal").addEventListener("click",e=>{ const b=e.target.cl
 backdrop.addEventListener("click",closeSheet);
 document.getElementById("btnClose").addEventListener("click",closeSheet);
 document.getElementById("btnDone").addEventListener("click",()=>{ const k=keyOf(PLAN[curIdx].d); setStatus(k,statuses[k]==="done"?null:"done"); openSheet(curIdx); });
-document.getElementById("btnSkip").addEventListener("click",()=>{ const k=keyOf(PLAN[curIdx].d); setStatus(k,statuses[k]==="skipped"?null:"skipped"); openSheet(curIdx); });
+document.getElementById("btnSkip").addEventListener("click",()=>{ const k=keyOf(PLAN[curIdx].d); setStatus(k,statuses[k]==="rest"?null:"rest"); openSheet(curIdx); });
 document.getElementById("btnClear").addEventListener("click",()=>{ setStatus(keyOf(PLAN[curIdx].d),null); openSheet(curIdx); });
 document.addEventListener("keydown",e=>{ if(e.key==="Escape") closeSheet(); });
 
 document.getElementById("pgPrev").addEventListener("click",()=>{ if(page>0){ page--; render(); } });
 document.getElementById("pgNext").addEventListener("click",()=>{ if(page<Math.ceil(WEEKS/PER)-1){ page++; render(); } });
 (async function init(){
+  for(const k in statuses){ if(statuses[k]==="skipped"){ statuses[k]="rest"; } }
   const ti=todayIndex(); if(ti>=0) page=Math.floor(Math.floor(ti/7)/PER);
   const remote=await loadFromSheets(); if(remote&&typeof remote==="object"){ statuses=Object.assign({},statuses,remote); saveStatuses(); }
   render();
