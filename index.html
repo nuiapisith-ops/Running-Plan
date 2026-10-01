@@ -44,6 +44,18 @@ h1{font-family:'Prompt',sans-serif; font-weight:800; font-size:clamp(26px,7vw,34
 .dtile .dnum small{font-size:11px; font-weight:600; color:var(--muted)}
 .dtile .dlab{font-size:10px; color:var(--muted); margin-top:2px; line-height:1.2}
 @media (max-width:430px){ .dash{grid-template-columns:repeat(2,1fr)} }
+.journey{background:var(--card); border:1px solid var(--line); border-radius:16px; padding:16px 16px 18px; margin:16px 0 8px}
+.journey h3{font-family:'Prompt',sans-serif; font-weight:700; font-size:15px; margin:0 0 3px}
+.journey .jsub{font-size:11px; color:var(--muted); margin-bottom:14px; line-height:1.4}
+.jrow{display:flex; align-items:center; gap:8px; margin:7px 0}
+.jrow .jy{width:34px; font-size:11px; color:var(--muted); flex-shrink:0}
+.jbar{flex:1; height:15px; background:rgba(255,255,255,.05); border-radius:6px; overflow:hidden}
+.jfill{height:100%; border-radius:6px; background:var(--muted); min-width:3px}
+.jfill.peak{background:var(--quality)}
+.jfill.cur{background:var(--easy)}
+.jrow .jn{width:82px; font-size:11px; color:var(--muted); flex-shrink:0}
+.jrow .jn b{font-family:'Prompt',sans-serif; font-weight:700; color:var(--ink); font-size:12px}
+.jcap{font-size:11px; color:var(--easy); margin-top:12px; line-height:1.5}
 .pager{display:flex; align-items:center; justify-content:space-between; gap:10px; margin:2px 2px 12px}
 .pgbtn{width:46px; height:38px; border-radius:12px; background:var(--card); border:1px solid var(--line); color:var(--ink); font-size:15px; cursor:pointer; -webkit-tap-highlight-color:transparent; transition:transform .1s}
 .pgbtn:active{transform:scale(.94)} .pgbtn:disabled{opacity:.3; cursor:default}
@@ -151,6 +163,7 @@ h1{font-family:'Prompt',sans-serif; font-weight:800; font-size:clamp(26px,7vw,34
     <b>4.</b> <b>สัปดาห์ถอย</b> (ทุก ~3 สัปดาห์) ห้ามข้าม — ร่างกายแข็งแรงตอนพัก<br>
     <b>5.</b> เจ็บผิดปกติ/เพลีย/งานหนัก → พักได้เลย ไม่ต้องรู้สึกผิด
   </div>
+  <div class="journey" id="journey"></div>
   <div class="foot" id="foot">บันทึกอัตโนมัติในเครื่องนี้</div>
 </div>
 
@@ -189,7 +202,8 @@ async function loadFromSheets(){ if(!CONFIG.SHEETS_WEBAPP_URL) return null;
 const TYPES={easy:{label:"วิ่งสบาย",ic:"🏃",color:"var(--easy)"},long:{label:"วิ่งยาวช้า",ic:"🛣️",color:"var(--long)"},quality:{label:"วิ่งคุณภาพ",ic:"⚡",color:"var(--quality)"},weights:{label:"เวท",ic:"🏋️",color:"var(--weights)"},combo:{label:"วิ่ง+เวท",ic:"🏃",color:"var(--weights)"},rest:{label:"พัก",ic:"😴",color:"var(--rest)"},walk:{label:"เดิน",ic:"🚶",color:"var(--walk)"},test:{label:"วัดผล",ic:"📊",color:"var(--test)"}};
 const THAI_DOW=["อาทิตย์","จันทร์","อังคาร","พุธ","พฤหัสบดี","ศุกร์","เสาร์"];
 const MO={7:"ก.ค.",8:"ส.ค.",9:"ก.ย.",10:"ต.ค."};
-const WD='<b>วอร์มก่อน 5 นาที</b><br><b>ท่าหลัก (2–3 เซ็ต/ท่า):</b><ol><li>สควอท 10–12 ครั้ง</li><li>ลันจ์ ข้างละ 8–10</li><li>วิดพื้น 8–12</li><li>โรว์ 10–12 — ไม่มีดัมเบล? ใช้<b>ขวดน้ำ 1.5 ลิตร 2 ขวด / ถุงข้าวสาร / เป้ใส่ของ</b> โน้มตัวแล้วดึงเข้าลำตัว (หรือมุดใต้โต๊ะแข็งแรง จับขอบโต๊ะดึงตัวขึ้น)</li><li><b>ฝึกดึงข้อ (มีบาร์แล้ว! 💪):</b> เป้าหมาย pull-up ครั้งแรก<ol type="a"><li><b>Dead hang</b> — ห้อยตัวนิ่งๆ 10–20 วิ × 3</li><li><b>Negative</b> — เขย่งขึ้นให้คางเลยบาร์ แล้วลดตัวลงช้าๆ <b>3–5 วิ</b> × 3–5 ครั้ง × 3 เซ็ต (ตัวสร้างแรงดึงเร็วสุด)</li><li>คล่องแล้วลองดึงเต็มตัว หรือใช้ยางยืดช่วยดัน</li></ol>ทำต้นๆ ตอนแขนยังสด</li><li><b>ยกน่อง (calf raise) 15–20</b> — กันเจ็บนักวิ่ง</li><li><b>Single-leg Deadlift</b> ข้างละ 8–10 — ยืนขาเดียว เข่างอนิด โน้มตัวไปหน้าพร้อมเหยียดขาหลังขึ้นให้ขนานพื้น (ท่าเครื่องบิน ✈️) หลังตรง ลงช้า 3 วิ ขึ้น 2 วิ · ตึงหลังต้นขาข้างที่ยืน = ถูกแล้ว<br><i>เบาไป? ทำช้าลง · หลับตา · ยืนบนเบาะนุ่ม · ถือขวดน้ำมือข้างตรงข้ามขาที่ยืน</i></li><li>แพลงก์ 30–45 วิ</li><li><b>Crunch 15–20 ครั้ง</b> — นอนหงาย เข่างอ ยกหัวไหล่ขึ้นเกร็งหน้าท้อง ช้าๆ ควบคุม อย่าดึงคอ (เสริมแพลงก์: แพลงก์เทรนแกนกลางแบบเกร็งนิ่ง crunch เทรนแบบงอตัว)</li></ol>พัก 60–90 วิ ระหว่างเซ็ต';
+const WD_PULL='<b>วอร์มก่อน 5 นาที</b> · ~30 นาที<br><b>🎯 โฟกัสดึงข้อ (บาร์ประตูครัว) — เป้าหมาย pull-up ครั้งแรก</b> ทำตอนแขนสดสุด<ol type="a"><li><b>Dead hang</b> — ห้อยตัวนิ่งๆ 20–30 วิ × 3 (วอร์ม สร้างแรงมือ/ไหล่)</li><li><b>Scapular pull</b> — ห้อยแขนตรง แล้วบีบสะบักลงยกตัวขึ้นนิดเดียว (ไม่งอศอก) 8–10 × 3 · ยางช่วยได้ถ้าล้า · ฝึกจุดเริ่มต้นการดึง</li><li><b>Negative</b> (พระเอก) — เขย่งขึ้นให้คางเลยบาร์ ลดตัวลงช้า <b>3–5 วิ</b> × 5 × 3 เซ็ต · ยางช่วยได้ · ตัวสร้างแรงดึงเร็วสุด</li><li><b>Flexed-arm hang</b> — ค้างคางเหนือบาร์ให้นานสุด 10–20 วิ × 3 · <b>ใช้ยางช่วย</b>เหยียบดันตัวขึ้น</li></ol><b>เสริมช่วงบน + แกนกลาง (2–3 เซ็ต):</b><ol><li>วิดพื้น 8–12</li><li>แพลงก์ 30–45 วิ</li><li>Crunch 15–20 — นอนหงาย เข่างอ ยกหัวไหล่เกร็งหน้าท้อง อย่าดึงคอ</li></ol>พัก 60–90 วิ ระหว่างเซ็ต';
+const WD_LEG='<b>วอร์มก่อน 5 นาที</b> · ~30 นาที<br><b>ท่าขา (2–3 เซ็ต/ท่า):</b><ol><li>สควอท 10–12 ครั้ง</li><li>ลันจ์ ข้างละ 8–10</li><li><b>ยกน่อง (calf raise) 15–20</b> — กันเจ็บนักวิ่ง</li><li><b>Single-leg Deadlift</b> ข้างละ 8–10 — ยืนขาเดียว เข่างอนิด โน้มตัวไปหน้าพร้อมเหยียดขาหลังขึ้นให้ขนานพื้น (ท่าเครื่องบิน ✈️) หลังตรง ลงช้า 3 วิ ขึ้น 2 วิ · ตึงหลังต้นขาข้างที่ยืน = ถูกแล้ว<br><i>เบาไป? ทำช้าลง · หลับตา · ยืนบนเบาะนุ่ม · ถือขวดน้ำมือข้างตรงข้ามขาที่ยืน</i></li></ol><b>ปิดท้ายแกนกลาง:</b><ol><li>แพลงก์ 30–45 วิ × 2</li></ol>พัก 60–90 วิ ระหว่างเซ็ต';
 const INTERVAL='<ol><li>วอร์ม 10 นาที</li><li><b>เร่ง 3 นาที</b> HR 160–168 (เหนื่อยแต่พูดเป็นวลีได้)</li><li><b>จ๊อกเบาๆ 2 นาที</b> (ไม่ใช่เดิน) ให้ HR ค่อยๆ ลง</li><li>ทำครบ <b>5 รอบ</b></li><li>คูลดาวน์ 10 นาที</li></ol>';
 const TEMPO='<ol><li>วอร์ม 10 นาที ช้าๆ</li><li><b>วิ่งเทมโป 20 นาที</b> ต่อเนื่องไม่พัก — เร็วพอที่พูดได้ทีละคำ ไม่ใช่ทั้งประโยค (HR ~158–165)</li><li>คูลดาวน์ 10 นาที</li></ol>';
 function longDetail(km,tag){ let s="วิ่งช้าที่สุดในสัปดาห์ — พูดได้ตลอดทาง เดินได้ถ้าเมื่อย เป้าคือ 'ถึงระยะ "+km+" กม.' ไม่ใช่ความเร็ว";
@@ -210,10 +224,10 @@ function pushWeek(mon,label,opts){
     ? mk(addD(mon,2),"easy","วิ่งสบาย 5K (คัมแบ็ก)",["5 กม.","เบาๆ ยังไม่ซัด"],"ช่วงกลับมา ยังไม่มีวันหนัก — วิ่งสบายแทน คุม HR ไม่ให้พุ่ง ฟังร่างกาย",5)
     : mk(addD(mon,2),"quality",tempo?"วิ่งคุณภาพ · เทมโป":"วิ่งคุณภาพ · อินเทอร์วัล",[tempo?"เทมโป 20 นาที":"5 × 3 นาที","วันหนักวันเดียว"],tempo?TEMPO:INTERVAL,5,"ห้ามทะลุ 170 — วันหนักวันเดียวของสัปดาห์");
   const D=[
-    mk(mon,"weights","เวทเต็มตัว",["30–40 นาที","ต้นสัปดาห์ ร่างกายสด"],WD,0,"หลังพักสุดสัปดาห์มา ร่างกายสด ทำให้เต็มที่ได้"),
+    mk(mon,"weights","เวทขา + แกนกลาง",["~30 นาที","ขา + core"],WD_LEG,0,"หลังพักวันอาทิตย์มา ขาสดเต็มที่ · มีวันเบาคั่นก่อนวันคุณภาพพุธ"),
     mk(addD(mon,1),"easy","วิ่งสบาย 5K",["5 กม.","สบาย พูดได้"],"ช้า นิ่ง สบาย เก็บเวลาในโซนแอโรบิก ยิ่งวันสบายเยอะ ฐานยิ่งแน่น",5),
     wed,
-    mk(addD(mon,3),"weights","เวทเต็มตัว",["30–40 นาที"],WD,0,"ถ้าขาล้าจากวันคุณภาพเมื่อวาน เน้นช่วงบน/แกนกลาง เบาขาได้"),
+    mk(addD(mon,3),"weights","เวทช่วงบน + ดึงข้อ",["~30 นาที","แขน/หลัง เน้น pull-up"],WD_PULL,0,"วันนี้ใช้แต่แขน/หลัง = ขาได้พักหลังโดนหนักวันพุธ"),
     mk(addD(mon,4),"easy","วิ่งสบายสั้นๆ 4–5K",["4–5 กม.","เบาๆ ก่อนวันยาว"],"วิ่งเบาๆ สั้นๆ ให้ขาสดก่อนวิ่งยาวพรุ่งนี้",4.5),
     mk(addD(mon,5),"long","วิ่งยาวช้า "+opts.km+"K"+(peak?" 🎯":""),[opts.km+" กม.","ช้าที่สุด","พูดได้ตลอด"],longDetail(opts.km,opts.tag),opts.km,
       peak?"ระยะเป้าหมาย 10K — วิ่งช้าๆ ค่อยๆ เก็บ":(opts.tag==="down"?"สัปดาห์ถอย เบาลงหน่อย ให้ร่างกายซ่อม":(opts.tag==="cele"?"ฉลองหลังพิชิต 10K 🎉":(opts.tag==="cb"?"ช่วงคัมแบ็ก เริ่มระยะสั้นๆ ฟังร่างกาย":null)))),
@@ -341,6 +355,23 @@ document.addEventListener("keydown",e=>{ if(e.key==="Escape") closeSheet(); });
 
 document.getElementById("pgPrev").addEventListener("click",()=>{ if(page>0){ page--; render(); } });
 document.getElementById("pgNext").addEventListener("click",()=>{ if(page<Math.ceil(WEEKS/PER)-1){ page++; render(); } });
+(function buildJourney(){
+  const J=[
+    {y:"2017",n:7,note:"เริ่มลองวิ่ง"},
+    {y:"2018",n:1,note:"หายไป"},
+    {y:"2019",n:51,note:"เริ่มจริงจัง"},
+    {y:"2020",n:123,note:"พีคสุด 🔥",cls:"peak"},
+    {y:"2021",n:2,note:"หยุดยาว"},
+    {y:"2022",n:19,note:""},
+    {y:"2023",n:9,note:""},
+    {y:"2024",n:10,note:""},
+    {y:"2025",n:6,note:""},
+    {y:"2026",n:65,note:"คัมแบ็ก*",cls:"cur"},
+  ];
+  const max=Math.max(...J.map(d=>d.n));
+  const rows=J.map(d=>`<div class="jrow"><span class="jy">${d.y}</span><div class="jbar"><div class="jfill ${d.cls||''}" style="width:${Math.max(d.n/max*100,2)}%"></div></div><span class="jn"><b>${d.n}</b> ${d.note}</span></div>`).join("");
+  document.getElementById("journey").innerHTML=`<h3>9 ปีของการวิ่ง 🏃</h3><div class="jsub">จำนวนวันวิ่งต่อปี · *2026 นับถึง ส.ค. ยังไม่จบปี</div>${rows}<div class="jcap">🔥 2026 เยอะสุดตั้งแต่ 2020 — และรอบนี้มีแผน มีโครงสร้าง ไม่ใช่วิ่งมั่วแล้วหายเหมือนก่อน</div>`;
+})();
 (async function init(){
   for(const k in statuses){ if(statuses[k]==="skipped"){ statuses[k]="rest"; } }
   const ti=todayIndex(); if(ti>=0) page=Math.floor(Math.floor(ti/7)/PER);
