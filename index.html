@@ -118,9 +118,9 @@ h1{font-family:'Prompt',sans-serif; font-weight:800; font-size:clamp(26px,7vw,34
 </head>
 <body>
 <div class="wrap">
-  <div class="eyebrow">เฟส 1 · สู่ 10K 🎯</div>
+  <div class="eyebrow">เฟส 2 · ปรับฐาน 10K ให้สบาย 🧱</div>
   <h1>ตารางวิ่งของหนุ่ย</h1>
-  <div class="sub">6 ก.ค. – 18 ต.ค. 2026 · เป้าหมาย 10K (เลื่อนหลังหายป่วย) · แตะวันเพื่อเช็ค</div>
+  <div class="sub">เฟส 1 ✓ (พิชิต 10K 10 ต.ค.) · เฟส 2 ถึง 27 ธ.ค. · เป้า: วิ่ง 10K ให้ HR อยู่โซนสบาย ไม่พุ่งโซน 5</div>
   <div class="prog">
     <div class="ring">
       <svg width="62" height="62" viewBox="0 0 62 62">
@@ -201,7 +201,7 @@ async function loadFromSheets(){ if(!CONFIG.SHEETS_WEBAPP_URL) return null;
 
 const TYPES={easy:{label:"วิ่งสบาย",ic:"🏃",color:"var(--easy)"},long:{label:"วิ่งยาวช้า",ic:"🛣️",color:"var(--long)"},quality:{label:"วิ่งคุณภาพ",ic:"⚡",color:"var(--quality)"},weights:{label:"เวท",ic:"🏋️",color:"var(--weights)"},combo:{label:"วิ่ง+เวท",ic:"🏃",color:"var(--weights)"},rest:{label:"พัก",ic:"😴",color:"var(--rest)"},walk:{label:"เดิน",ic:"🚶",color:"var(--walk)"},test:{label:"วัดผล",ic:"📊",color:"var(--test)"}};
 const THAI_DOW=["อาทิตย์","จันทร์","อังคาร","พุธ","พฤหัสบดี","ศุกร์","เสาร์"];
-const MO={7:"ก.ค.",8:"ส.ค.",9:"ก.ย.",10:"ต.ค."};
+const MO={7:"ก.ค.",8:"ส.ค.",9:"ก.ย.",10:"ต.ค.",11:"พ.ย.",12:"ธ.ค."};
 const WD_PULL='<b>วอร์มก่อน 5 นาที</b> · ~30 นาที<br><b>🎯 โฟกัสดึงข้อ (บาร์ประตูครัว) — เป้าหมาย pull-up ครั้งแรก</b> ทำตอนแขนสดสุด<ol type="a"><li><b>Dead hang</b> — ห้อยตัวนิ่งๆ 20–30 วิ × 3 (วอร์ม สร้างแรงมือ/ไหล่)</li><li><b>Scapular pull</b> — ห้อยแขนตรง แล้วบีบสะบักลงยกตัวขึ้นนิดเดียว (ไม่งอศอก) 8–10 × 3 · ยางช่วยได้ถ้าล้า · ฝึกจุดเริ่มต้นการดึง</li><li><b>Negative</b> (พระเอก) — เขย่งขึ้นให้คางเลยบาร์ ลดตัวลงช้า <b>3–5 วิ</b> × 5 × 3 เซ็ต · ยางช่วยได้ · ตัวสร้างแรงดึงเร็วสุด</li><li><b>Flexed-arm hang</b> — ค้างคางเหนือบาร์ให้นานสุด 10–20 วิ × 3 · <b>ใช้ยางช่วย</b>เหยียบดันตัวขึ้น</li></ol><b>เสริมช่วงบน + แกนกลาง (2–3 เซ็ต):</b><ol><li>วิดพื้น 8–12</li><li>แพลงก์ 30–45 วิ</li><li>Crunch 15–20 — นอนหงาย เข่างอ ยกหัวไหล่เกร็งหน้าท้อง อย่าดึงคอ</li></ol>พัก 60–90 วิ ระหว่างเซ็ต';
 const WD_LEG='<b>วอร์มก่อน 5 นาที</b> · ~30 นาที<br><b>ท่าขา (2–3 เซ็ต/ท่า):</b><ol><li>สควอท 10–12 ครั้ง</li><li>ลันจ์ ข้างละ 8–10</li><li><b>ยกน่อง (calf raise) 15–20</b> — กันเจ็บนักวิ่ง</li><li><b>Single-leg Deadlift</b> ข้างละ 8–10 — ยืนขาเดียว เข่างอนิด โน้มตัวไปหน้าพร้อมเหยียดขาหลังขึ้นให้ขนานพื้น (ท่าเครื่องบิน ✈️) หลังตรง ลงช้า 3 วิ ขึ้น 2 วิ · ตึงหลังต้นขาข้างที่ยืน = ถูกแล้ว<br><i>เบาไป? ทำช้าลง · หลับตา · ยืนบนเบาะนุ่ม · ถือขวดน้ำมือข้างตรงข้ามขาที่ยืน</i></li></ol><b>ปิดท้ายแกนกลาง:</b><ol><li>แพลงก์ 30–45 วิ × 2</li></ol>พัก 60–90 วิ ระหว่างเซ็ต';
 const INTERVAL='<ol><li>วอร์ม 10 นาที</li><li><b>เร่ง 3 นาที</b> HR 160–168 (เหนื่อยแต่พูดเป็นวลีได้)</li><li><b>จ๊อกเบาๆ 2 นาที</b> (ไม่ใช่เดิน) ให้ HR ค่อยๆ ลง</li><li>ทำครบ <b>5 รอบ</b></li><li>คูลดาวน์ 10 นาที</li></ol>';
@@ -211,6 +211,7 @@ function longDetail(km,tag){ let s="วิ่งช้าที่สุดใ�
   else if(tag==="peak") s+="<br>🎯 <b>ระยะเป้าหมาย 10K!</b> ถึงได้ = จบเฟสแรก ค่อยๆ วิ่งช้าๆ เก็บทีละกิโล";
   else if(tag==="cele") s+="<br>🎉 หลังพิชิต 10K — วิ่งสบายๆ ฉลอง รักษาระดับไว้";
   else if(tag==="cb") s+="<br><b>ช่วงคัมแบ็ก</b> — เพิ่งหายป่วย เริ่มระยะสั้นๆ วิ่งช้ามาก คุม HR อย่าให้พุ่ง เหนื่อยผิดปกติให้หยุด";
+  else if(tag==="base") s+="<br><b>ปรับฐาน (เฟส 2)</b> — เป้าไม่ใช่ไกลขึ้น แต่คุม HR ให้อยู่ <b>โซน 2–3 (ไม่เกิน ~164)</b> ตลอดทาง ยอมช้ามากได้ · ถ้า HR ไต่แตะโซน 4-5 ให้เดินจน HR ลง · <b>ออกวิ่งข้างนอก (เบญจกิติ) คุม HR ง่ายกว่าลู่</b>";
   return s; }
 
 function dmObj(dt){ return [dt.getDate(), dt.getMonth()+1]; }
@@ -230,18 +231,18 @@ function pushWeek(mon,label,opts){
     mk(addD(mon,3),"weights","เวทช่วงบน + ดึงข้อ",["~30 นาที","แขน/หลัง เน้น pull-up"],WD_PULL,0,"วันนี้ใช้แต่แขน/หลัง = ขาได้พักหลังโดนหนักวันพุธ"),
     mk(addD(mon,4),"easy","วิ่งสบายสั้นๆ 4–5K",["4–5 กม.","เบาๆ ก่อนวันยาว"],"วิ่งเบาๆ สั้นๆ ให้ขาสดก่อนวิ่งยาวพรุ่งนี้",4.5),
     mk(addD(mon,5),"long","วิ่งยาวช้า "+opts.km+"K"+(peak?" 🎯":""),[opts.km+" กม.","ช้าที่สุด","พูดได้ตลอด"],longDetail(opts.km,opts.tag),opts.km,
-      peak?"ระยะเป้าหมาย 10K — วิ่งช้าๆ ค่อยๆ เก็บ":(opts.tag==="down"?"สัปดาห์ถอย เบาลงหน่อย ให้ร่างกายซ่อม":(opts.tag==="cele"?"ฉลองหลังพิชิต 10K 🎉":(opts.tag==="cb"?"ช่วงคัมแบ็ก เริ่มระยะสั้นๆ ฟังร่างกาย":null)))),
+      peak?"ระยะเป้าหมาย 10K — วิ่งช้าๆ ค่อยๆ เก็บ":(opts.tag==="down"?"สัปดาห์ถอย เบาลงหน่อย ให้ร่างกายซ่อม":(opts.tag==="cele"?"ฉลองหลังพิชิต 10K 🎉":(opts.tag==="cb"?"ช่วงคัมแบ็ก เริ่มระยะสั้นๆ ฟังร่างกาย":(opts.tag==="base"?"ปรับฐาน: คุม HR อย่าให้พุ่งโซน 5 · ยอมช้าได้ · วิ่งข้างนอกดีกว่าลู่":null))))),
     mk(addD(mon,6),"rest","พักเต็มวัน",["ฟื้นจากวิ่งยาว"],"เมื่อวานวิ่งยาว วันนี้ให้ขาได้พักจริงๆ นอนให้พอ",0),
   ];
   D.forEach(o=>{ o.wk=label; PLAN.push(o); });
 }
 const START_MON=new Date(2026,6,6);
 //           สัปดาห์ 1–6 (ปกติ)      | คัมแบ็ก 1–3 (หลังหายป่วย) | กลับเข้าแผน → 10K
-const LONGS=[7,7.5,8,6,8.5,9,          4,6,7,                      8,9,7,9.5,10,7];
-const LTAG =["","","","down","","",    "cb","cb","cb",             "","","down","","peak","cele"];
-const LQ   =["int","tempo","int","tempo","int","tempo",  "none","none","tempo",  "int","tempo","int","tempo","int","tempo"];
-const WK=15;
-function wkLabel(i){ return i<6 ? "สัปดาห์ "+(i+1) : (i<9 ? "คัมแบ็ก "+(i-5) : "สัปดาห์ "+(i-2)); }
+const LONGS=[7,7.5,8,6,8.5,9,          4,6,7,                      8,9,7,9.5,10,7,          8,9,10,8,9,10,8,10,11,9];
+const LTAG =["","","","down","","",    "cb","cb","cb",             "","","down","","peak","cele",  "base","base","base","down","base","base","down","base","base","down"];
+const LQ   =["int","tempo","int","tempo","int","tempo",  "none","none","tempo",  "int","tempo","int","tempo","int","tempo",  "int","tempo","int","tempo","int","tempo","int","tempo","int","tempo"];
+const WK=25;
+function wkLabel(i){ return i<6 ? "สัปดาห์ "+(i+1) : (i<9 ? "คัมแบ็ก "+(i-5) : (i<15 ? "สัปดาห์ "+(i-2) : "เฟส2 · สัปดาห์ "+(i-14))); }
 for(let i=0;i<WK;i++){ pushWeek(addD(START_MON,7*i),wkLabel(i),{km:LONGS[i],tag:LTAG[i],q:LQ[i]}); }
 PLAN[0]=mk(START_MON,"rest","พักฟื้น 💤",["ฟังร่างกาย"],"วันนี้พักเพราะนอนน้อย งานหนัก ปวดหัว — ตัดสินใจถูกแล้ว ฝืนไปได้ไม่คุ้ม พรุ่งนี้ค่อยเริ่มเบาๆ",0);
 PLAN[0].wk="สัปดาห์ 1";
@@ -259,7 +260,7 @@ function computeAdvice(){
   const ti=todayIndex();
   if(ti<0){ const done=Object.values(statuses).filter(s=>s==="done").length;
     if(done===0) return {at:"var(--accent)",lab:"พร้อมเริ่ม",ttl:"เฟส 1 · สู่ 10K",bd:"แตะแต่ละวันเพื่อดูรายละเอียด แล้วเช็ค ✓ เมื่อทำเสร็จ · วันยาว (เสาร์) จะค่อยๆ เพิ่มจนถึง 10 กม."};
-    return {at:"var(--good)",lab:"สรุป",ttl:"จบเฟส 1 แล้ว!",bd:"ทำครบเฟสสู่ 10K "+done+" วัน เก่งมาก! พร้อมเมื่อไหร่บอกได้ ผมต่อเฟส 2 (ปรับฐาน) ให้เลย"}; }
+    return {at:"var(--good)",lab:"สรุป",ttl:"จบเฟส 2 แล้ว!",bd:"ปรับฐาน 10K ครบ "+done+" วัน เก่งมาก! พร้อมเมื่อไหร่บอกได้ ผมต่อเฟส 3 (สู่ฮาล์ฟมาราธอน 21K) ให้เลย"}; }
   const today=PLAN[ti], st=statuses[keyOf(today.d)];
   if(st==="done") return {at:"var(--good)",lab:"วันนี้",ttl:"ทำครบแล้ว 🎉",bd:"เยี่ยมมากหนุ่ย "+today.title+"เรียบร้อย พักผ่อนให้เต็มที่"};
   if(st==="rest") return {at:"var(--rest)",lab:"วันนี้",ttl:"วันนี้พัก 😴",bd:"เปลี่ยนเป็นวันพักแล้ว — พักคือส่วนหนึ่งของแผน ไม่ใช่ความผิด พรุ่งนี้ค่อยลุยต่อ"};
@@ -274,9 +275,9 @@ function computeAdvice(){
   return {at:TYPES[today.t].color,lab:"แผนวันนี้",ttl:today.title,bd:(today.chips.filter(c=>c).join(" · ")||"")+(today.note?"<br>"+today.note:"")};
 }
 
-const PER=4, WEEKS=PLAN.length/7; let page=0;
+const PER=4, WEEKS=PLAN.length/7; let startW=0;
 function render(){
-  const startW=page*PER, endW=Math.min(startW+PER,WEEKS);
+  startW=Math.max(0,Math.min(startW,WEEKS-1)); const endW=Math.min(startW+PER,WEEKS);
   let html="";
   for(let w=startW;w<endW;w++){ html+=`<div class="week"><div class="wk">${PLAN[w*7].wk}</div>`;
     for(let i=0;i<7;i++){ const idx=w*7+i,p=PLAN[idx],k=keyOf(p.d),s=statuses[k];
@@ -287,8 +288,8 @@ function render(){
     html+=`</div>`; }
   document.getElementById("cal").innerHTML=html;
   document.getElementById("pgLabel").textContent=PLAN[startW*7].wk+" – "+PLAN[(endW-1)*7].wk;
-  document.getElementById("pgPrev").disabled=(page<=0);
-  document.getElementById("pgNext").disabled=(page>=Math.ceil(WEEKS/PER)-1);
+  document.getElementById("pgPrev").disabled=(startW<=0);
+  document.getElementById("pgNext").disabled=(endW>=WEEKS);
 
   const planKeys=new Set(PLAN.map(p=>keyOf(p.d)));
   const doneCount=Object.keys(statuses).filter(k=>planKeys.has(k)&&(statuses[k]==="done"||statuses[k]==="rest")).length, total=PLAN.length, pct=Math.round(doneCount/total*100);
@@ -353,8 +354,8 @@ document.getElementById("btnSkip").addEventListener("click",()=>{ const k=keyOf(
 document.getElementById("btnClear").addEventListener("click",()=>{ setStatus(keyOf(PLAN[curIdx].d),null); openSheet(curIdx); });
 document.addEventListener("keydown",e=>{ if(e.key==="Escape") closeSheet(); });
 
-document.getElementById("pgPrev").addEventListener("click",()=>{ if(page>0){ page--; render(); } });
-document.getElementById("pgNext").addEventListener("click",()=>{ if(page<Math.ceil(WEEKS/PER)-1){ page++; render(); } });
+document.getElementById("pgPrev").addEventListener("click",()=>{ if(startW>0){ startW=Math.max(0,startW-PER); render(); } });
+document.getElementById("pgNext").addEventListener("click",()=>{ if(startW+PER<WEEKS){ startW+=PER; render(); } });
 (function buildJourney(){
   const J=[
     {y:"2017",n:7,note:"เริ่มลองวิ่ง"},
@@ -374,7 +375,7 @@ document.getElementById("pgNext").addEventListener("click",()=>{ if(page<Math.ce
 })();
 (async function init(){
   for(const k in statuses){ if(statuses[k]==="skipped"){ statuses[k]="rest"; } }
-  const ti=todayIndex(); if(ti>=0) page=Math.floor(Math.floor(ti/7)/PER);
+  const ti=todayIndex(); if(ti>=0) startW=Math.floor(ti/7);
   const remote=await loadFromSheets(); if(remote&&typeof remote==="object"){ statuses=Object.assign({},statuses,remote); saveStatuses(); }
   render();
 })();
